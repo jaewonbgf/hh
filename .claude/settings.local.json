@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk ls *)",
+      "Bash(rtk find *)",
+      "PowerShell(Get-ChildItem C:\\\\claude\\\\hh -Force | Select-Object Name, Length; \"=== Downloads ===\"; Get-ChildItem C:\\\\Users\\\\romancetree\\\\Downloads -Filter *.json -ErrorAction SilentlyContinue | Select-Object Name, Length)",
+      "Bash(py *)",
+      "Bash(rtk curl *)",
+      "Bash(python *)",
+      "PowerShell(Invoke-Item *)",
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "PowerShell(npm install *)",
+      "PowerShell(Set-Location C:\\\\claude\\\\hh; Start-Process node -ArgumentList \"server.js\" -WindowStyle Hidden; Start-Sleep -Seconds 2; \"--- /api/recommend 테스트 \\(여아/산리오/멋진/보라\\) ---\"; try { \\(Invoke-WebRequest \"http://localhost:3000/api/recommend\" -Method POST -ContentType \"application/json\" -Body '{\"gender\":\"여아\",\"type\":\"산리오\",\"mood\":\"멋진\",\"color\":\"보라색\"}' -UseBasicParsing\\).Content } catch { \"ERR: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(\"--- 해성이용: 남아/게임/강한/초록 ---\"; try { \\(Invoke-WebRequest \"http://localhost:3000/api/recommend\" -Method POST -ContentType \"application/json\" -Body '{\"gender\":\"남아\",\"type\":\"게임\",\"mood\":\"강력한\",\"color\":\"초록색\"}' -UseBasicParsing\\).Content } catch { \"ERR: $\\($_.Exception.Message\\)\" }; \"--- index ---\"; try { \\(Invoke-WebRequest \"http://localhost:3000/\" -UseBasicParsing\\).StatusCode } catch { \"ERR: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(Get-Process *)",
+      "Bash(node *)",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(\"img 내용:\"; Get-ChildItem C:\\\\claude\\\\hh\\\\img -Force -ErrorAction SilentlyContinue | ForEach-Object { \"$\\($_.Name\\)  \\($\\($_.Length\\) bytes\\)\" }; \"끝\")",
+      "Bash(dir /b public img)",
+      "Bash(cp characters.json public/characters.json)",
+      "Bash(mkdir -p public/img)",
+      "Bash(cp img/hn.jpg public/img/hn.jpg)",
+      "Bash(cp img/hs.jpg public/img/hs.jpg)",
+      "Bash(git init *)",
+      "Bash(rtk git *)",
+      "Bash(rtk git -c user.email=bgfnetworks2025@gmail.com -c user.name=character-finder commit -q -m '정적 사이트로 변환: 추천 로직 클라이언트 이식, Cloudflare Pages 배포 준비 *)"
+    ]
+  }
+}

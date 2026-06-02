@@ -1,0 +1,1839 @@
+{
+  "characters": [
+    {
+      "id": 1,
+      "name": "헬로키티",
+      "emoji": "🐱",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "귀여운",
+        "고양이",
+        "하양",
+        "빨강",
+        "클래식",
+        "다정한"
+      ],
+      "image": "/images/1.svg"
+    },
+    {
+      "id": 2,
+      "name": "마이멜로디",
+      "emoji": "🎀",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "분홍색",
+        "착한",
+        "토끼",
+        "다정한",
+        "귀여운"
+      ],
+      "image": "/images/2.svg"
+    },
+    {
+      "id": 3,
+      "name": "쿠로미",
+      "emoji": "💜",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "시크한",
+        "보라색",
+        "반전매력",
+        "스타일리시",
+        "새침한"
+      ],
+      "image": "/images/3.svg"
+    },
+    {
+      "id": 4,
+      "name": "시나모롤",
+      "emoji": "🤍",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "하얀색",
+        "강아지",
+        "감성적인",
+        "귀여운",
+        "조용한"
+      ],
+      "image": "/images/4.svg"
+    },
+    {
+      "id": 5,
+      "name": "포차코",
+      "emoji": "🐶",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "클래식",
+        "귀여운",
+        "강아지",
+        "활발한",
+        "하양"
+      ],
+      "image": "/images/5.svg"
+    },
+    {
+      "id": 6,
+      "name": "폼폼푸린",
+      "emoji": "🍮",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "노랑",
+        "강아지",
+        "느긋한",
+        "귀여운",
+        "엉뚱한"
+      ],
+      "image": "/images/6.svg"
+    },
+    {
+      "id": 7,
+      "name": "케로피",
+      "emoji": "🐸",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "초록색",
+        "개구리",
+        "활발한",
+        "웃긴",
+        "장난꾸러기"
+      ],
+      "image": "/images/7.svg"
+    },
+    {
+      "id": 8,
+      "name": "키키라라",
+      "emoji": "⭐",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "별",
+        "신비한",
+        "쌍둥이",
+        "파랑",
+        "마법"
+      ],
+      "image": "/images/8.svg"
+    },
+    {
+      "id": 9,
+      "name": "구데타마",
+      "emoji": "🥚",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "노랑",
+        "엉뚱한",
+        "웃긴",
+        "느긋한",
+        "귀여운"
+      ],
+      "image": "/images/9.svg"
+    },
+    {
+      "id": 10,
+      "name": "badtzmaru",
+      "emoji": "🐧",
+      "category": "산리오",
+      "sub_category": "산리오 캐릭터즈",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "검정",
+        "펭귄",
+        "장난꾸러기",
+        "시크한",
+        "새침한"
+      ],
+      "image": "/images/10.svg"
+    },
+    {
+      "id": 11,
+      "name": "하츄핑",
+      "emoji": "💗",
+      "category": "애니메이션",
+      "sub_category": "캐치! 티니핑",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "분홍색",
+        "사랑",
+        "귀여운",
+        "마법",
+        "다정한"
+      ],
+      "image": "/images/11.svg"
+    },
+    {
+      "id": 12,
+      "name": "라라핑",
+      "emoji": "🎵",
+      "category": "애니메이션",
+      "sub_category": "캐치! 티니핑",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "음악",
+        "춤추기",
+        "활발한",
+        "노랑",
+        "귀여운"
+      ],
+      "image": "/images/12.svg"
+    },
+    {
+      "id": 13,
+      "name": "차차핑",
+      "emoji": "💎",
+      "category": "애니메이션",
+      "sub_category": "캐치! 티니핑",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "보라색",
+        "새침한",
+        "스타일리시",
+        "마법"
+      ],
+      "image": "/images/13.svg"
+    },
+    {
+      "id": 14,
+      "name": "아자핑",
+      "emoji": "🔥",
+      "category": "애니메이션",
+      "sub_category": "캐치! 티니핑",
+      "target_gender": "공통",
+      "target_age": "저학년",
+      "keywords": [
+        "빨강",
+        "용감한",
+        "활발한",
+        "에너지",
+        "강한"
+      ],
+      "image": "/images/14.svg"
+    },
+    {
+      "id": 15,
+      "name": "새침핑",
+      "emoji": "😼",
+      "category": "애니메이션",
+      "sub_category": "캐치! 티니핑",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "새침한",
+        "분홍색",
+        "마법",
+        "반전매력"
+      ],
+      "image": "/images/15.svg"
+    },
+    {
+      "id": 16,
+      "name": "떼쟁핑",
+      "emoji": "😤",
+      "category": "애니메이션",
+      "sub_category": "캐치! 티니핑",
+      "target_gender": "공통",
+      "target_age": "저학년",
+      "keywords": [
+        "엉뚱한",
+        "장난꾸러기",
+        "웃긴",
+        "빨강"
+      ],
+      "image": "/images/16.svg"
+    },
+    {
+      "id": 17,
+      "name": "방글핑",
+      "emoji": "😆",
+      "category": "애니메이션",
+      "sub_category": "캐치! 티니핑",
+      "target_gender": "공통",
+      "target_age": "저학년",
+      "keywords": [
+        "웃긴",
+        "활발한",
+        "노랑",
+        "장난꾸러기",
+        "다정한"
+      ],
+      "image": "/images/17.svg"
+    },
+    {
+      "id": 18,
+      "name": "무지개핑",
+      "emoji": "🌈",
+      "category": "애니메이션",
+      "sub_category": "캐치! 티니핑",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "무지개",
+        "신비한",
+        "마법",
+        "사랑",
+        "귀여운"
+      ],
+      "image": "/images/18.svg"
+    },
+    {
+      "id": 19,
+      "name": "피카츄",
+      "emoji": "⚡",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "노랑",
+        "전기",
+        "모험",
+        "배틀",
+        "친근한",
+        "귀여운"
+      ],
+      "image": "/images/19.svg"
+    },
+    {
+      "id": 20,
+      "name": "이브이",
+      "emoji": "🦊",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "갈색",
+        "진화",
+        "귀여운",
+        "수집",
+        "다정한"
+      ],
+      "image": "/images/20.svg"
+    },
+    {
+      "id": 21,
+      "name": "파이리",
+      "emoji": "🔥",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "빨강",
+        "불",
+        "용감한",
+        "배틀",
+        "공룡"
+      ],
+      "image": "/images/21.svg"
+    },
+    {
+      "id": 22,
+      "name": "꼬부기",
+      "emoji": "💧",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "파랑",
+        "물",
+        "거북이",
+        "배틀",
+        "귀여운"
+      ],
+      "image": "/images/22.svg"
+    },
+    {
+      "id": 23,
+      "name": "이상해씨",
+      "emoji": "🌱",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "초록색",
+        "풀",
+        "느긋한",
+        "귀여운",
+        "공룡"
+      ],
+      "image": "/images/23.svg"
+    },
+    {
+      "id": 24,
+      "name": "잠만보",
+      "emoji": "😴",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "파랑",
+        "곰",
+        "느긋한",
+        "웃긴",
+        "조용한"
+      ],
+      "image": "/images/24.svg"
+    },
+    {
+      "id": 25,
+      "name": "리자몽",
+      "emoji": "🐉",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "주황",
+        "불",
+        "용",
+        "강한",
+        "멋진",
+        "배틀"
+      ],
+      "image": "/images/25.svg"
+    },
+    {
+      "id": 26,
+      "name": "푸린",
+      "emoji": "🎤",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "분홍색",
+        "노래",
+        "귀여운",
+        "마법",
+        "다정한"
+      ],
+      "image": "/images/26.svg"
+    },
+    {
+      "id": 27,
+      "name": "뮤",
+      "emoji": "✨",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "분홍색",
+        "신비한",
+        "마법",
+        "전설",
+        "귀여운"
+      ],
+      "image": "/images/27.svg"
+    },
+    {
+      "id": 28,
+      "name": "뜨아거",
+      "emoji": "🔥",
+      "category": "게임/애니메이션",
+      "sub_category": "포켓몬",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "귀여운",
+        "최신",
+        "어리바리한",
+        "엉뚱한"
+      ],
+      "image": "/images/28.svg"
+    },
+    {
+      "id": 29,
+      "name": "쉘리",
+      "emoji": "💥",
+      "category": "모바일 게임",
+      "sub_category": "브롤스타즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "슈팅",
+        "강력한",
+        "기본캐릭터",
+        "액션",
+        "용감한"
+      ],
+      "image": "/images/29.svg"
+    },
+    {
+      "id": 30,
+      "name": "콜트",
+      "emoji": "🤠",
+      "category": "모바일 게임",
+      "sub_category": "브롤스타즈",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "슈팅",
+        "멋진",
+        "액션",
+        "노랑",
+        "용감한"
+      ],
+      "image": "/images/30.svg"
+    },
+    {
+      "id": 31,
+      "name": "레온",
+      "emoji": "🥷",
+      "category": "모바일 게임",
+      "sub_category": "브롤스타즈",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "은신",
+        "닌자",
+        "멋진",
+        "인기많은",
+        "초록색"
+      ],
+      "image": "/images/31.svg"
+    },
+    {
+      "id": 32,
+      "name": "스파이크",
+      "emoji": "🌵",
+      "category": "모바일 게임",
+      "sub_category": "브롤스타즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "선인장",
+        "귀여운",
+        "강력한",
+        "인기많은",
+        "초록색"
+      ],
+      "image": "/images/32.svg"
+    },
+    {
+      "id": 33,
+      "name": "크로우",
+      "emoji": "🐦‍⬛",
+      "category": "모바일 게임",
+      "sub_category": "브롤스타즈",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "검정",
+        "독",
+        "멋진",
+        "빠른",
+        "시크한"
+      ],
+      "image": "/images/33.svg"
+    },
+    {
+      "id": 34,
+      "name": "니타",
+      "emoji": "🐻",
+      "category": "모바일 게임",
+      "sub_category": "브롤스타즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "곰",
+        "소환",
+        "강한",
+        "활발한",
+        "갈색"
+      ],
+      "image": "/images/34.svg"
+    },
+    {
+      "id": 35,
+      "name": "엘프리모",
+      "emoji": "🤼",
+      "category": "모바일 게임",
+      "sub_category": "브롤스타즈",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "빨강",
+        "힘",
+        "강력한",
+        "용감한",
+        "레슬링"
+      ],
+      "image": "/images/35.svg"
+    },
+    {
+      "id": 36,
+      "name": "8비트",
+      "emoji": "🕹️",
+      "category": "모바일 게임",
+      "sub_category": "브롤스타즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "게임",
+        "레트로",
+        "파랑",
+        "강력한",
+        "엉뚱한"
+      ],
+      "image": "/images/36.svg"
+    },
+    {
+      "id": 37,
+      "name": "스티브",
+      "emoji": "⛏️",
+      "category": "게임",
+      "sub_category": "마인크래프트",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "생존",
+        "건축",
+        "네모",
+        "모험",
+        "만들기"
+      ],
+      "image": "/images/37.svg"
+    },
+    {
+      "id": 38,
+      "name": "알렉스",
+      "emoji": "🪓",
+      "category": "게임",
+      "sub_category": "마인크래프트",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "생존",
+        "건축",
+        "모험",
+        "주황",
+        "만들기",
+        "용감한"
+      ],
+      "image": "/images/38.svg"
+    },
+    {
+      "id": 39,
+      "name": "크리퍼",
+      "emoji": "🟩",
+      "category": "게임",
+      "sub_category": "마인크래프트",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "몬스터",
+        "폭발",
+        "초록색",
+        "스릴",
+        "무서운"
+      ],
+      "image": "/images/39.svg"
+    },
+    {
+      "id": 40,
+      "name": "엔더맨",
+      "emoji": "🌑",
+      "category": "게임",
+      "sub_category": "마인크래프트",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "검정",
+        "신비한",
+        "순간이동",
+        "무서운",
+        "키큰"
+      ],
+      "image": "/images/40.svg"
+    },
+    {
+      "id": 41,
+      "name": "좀비",
+      "emoji": "🧟",
+      "category": "게임",
+      "sub_category": "마인크래프트",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "초록색",
+        "몬스터",
+        "웃긴",
+        "느릿",
+        "무서운"
+      ],
+      "image": "/images/41.svg"
+    },
+    {
+      "id": 42,
+      "name": "마크늑대",
+      "emoji": "🐺",
+      "category": "게임",
+      "sub_category": "마인크래프트",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "늑대",
+        "강아지",
+        "다정한",
+        "회색",
+        "용감한"
+      ],
+      "image": "/images/42.svg"
+    },
+    {
+      "id": 43,
+      "name": "베이컨헤어",
+      "emoji": "🥓",
+      "category": "모바일 게임",
+      "sub_category": "로블록스",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "메타버스",
+        "자유도",
+        "유머러스",
+        "밈",
+        "엉뚱한"
+      ],
+      "image": "/images/43.svg"
+    },
+    {
+      "id": 44,
+      "name": "누브",
+      "emoji": "🟦",
+      "category": "모바일 게임",
+      "sub_category": "로블록스",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "초보",
+        "노랑",
+        "웃긴",
+        "친근한",
+        "밈"
+      ],
+      "image": "/images/44.svg"
+    },
+    {
+      "id": 45,
+      "name": "빌더맨",
+      "emoji": "👷",
+      "category": "모바일 게임",
+      "sub_category": "로블록스",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "건축",
+        "만들기",
+        "리더십",
+        "주황",
+        "용감한"
+      ],
+      "image": "/images/45.svg"
+    },
+    {
+      "id": 46,
+      "name": "도어즈괴물",
+      "emoji": "👁️",
+      "category": "모바일 게임",
+      "sub_category": "로블록스",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "호러",
+        "무서운",
+        "스릴",
+        "검정",
+        "신비한"
+      ],
+      "image": "/images/46.svg"
+    },
+    {
+      "id": 47,
+      "name": "신비",
+      "emoji": "👻",
+      "category": "애니메이션",
+      "sub_category": "신비아파트",
+      "target_gender": "공통",
+      "target_age": "저학년",
+      "keywords": [
+        "도깨비",
+        "호러",
+        "유머러스",
+        "초록색",
+        "신비한"
+      ],
+      "image": "/images/47.svg"
+    },
+    {
+      "id": 48,
+      "name": "금비",
+      "emoji": "🦊",
+      "category": "애니메이션",
+      "sub_category": "신비아파트",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "여우",
+        "귀여운",
+        "노랑",
+        "다정한",
+        "신비한"
+      ],
+      "image": "/images/48.svg"
+    },
+    {
+      "id": 49,
+      "name": "하리",
+      "emoji": "🎒",
+      "category": "애니메이션",
+      "sub_category": "신비아파트",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "용감한",
+        "리더십",
+        "분홍색",
+        "똑똑한",
+        "활발한"
+      ],
+      "image": "/images/49.svg"
+    },
+    {
+      "id": 50,
+      "name": "두리",
+      "emoji": "🧢",
+      "category": "애니메이션",
+      "sub_category": "신비아파트",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "용감한",
+        "장난꾸러기",
+        "파랑",
+        "활발한"
+      ],
+      "image": "/images/50.svg"
+    },
+    {
+      "id": 51,
+      "name": "강림",
+      "emoji": "⚔️",
+      "category": "애니메이션",
+      "sub_category": "신비아파트",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "퇴마사",
+        "멋진",
+        "강한",
+        "검정",
+        "진지한"
+      ],
+      "image": "/images/51.svg"
+    },
+    {
+      "id": 52,
+      "name": "엘사",
+      "emoji": "❄️",
+      "category": "애니메이션",
+      "sub_category": "디즈니 프린세스",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "파랑",
+        "마법",
+        "얼음",
+        "멋진",
+        "공주",
+        "신비한"
+      ],
+      "image": "/images/52.svg"
+    },
+    {
+      "id": 53,
+      "name": "안나",
+      "emoji": "🧣",
+      "category": "애니메이션",
+      "sub_category": "디즈니 프린세스",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "주황",
+        "용감한",
+        "활발한",
+        "공주",
+        "다정한"
+      ],
+      "image": "/images/53.svg"
+    },
+    {
+      "id": 54,
+      "name": "라푼젤",
+      "emoji": "💇‍♀️",
+      "category": "애니메이션",
+      "sub_category": "디즈니 프린세스",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "보라색",
+        "긴머리",
+        "공주",
+        "활발한",
+        "마법"
+      ],
+      "image": "/images/54.svg"
+    },
+    {
+      "id": 55,
+      "name": "신데렐라",
+      "emoji": "👠",
+      "category": "애니메이션",
+      "sub_category": "디즈니 프린세스",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "파랑",
+        "공주",
+        "우아한",
+        "마법",
+        "다정한"
+      ],
+      "image": "/images/55.svg"
+    },
+    {
+      "id": 56,
+      "name": "인어공주",
+      "emoji": "🧜‍♀️",
+      "category": "애니메이션",
+      "sub_category": "디즈니 프린세스",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "빨강",
+        "물고기",
+        "공주",
+        "바다",
+        "활발한"
+      ],
+      "image": "/images/56.svg"
+    },
+    {
+      "id": 57,
+      "name": "모아나",
+      "emoji": "🌊",
+      "category": "애니메이션",
+      "sub_category": "디즈니 프린세스",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "바다",
+        "모험",
+        "용감한",
+        "갈색",
+        "탐험"
+      ],
+      "image": "/images/57.svg"
+    },
+    {
+      "id": 58,
+      "name": "벨",
+      "emoji": "📖",
+      "category": "애니메이션",
+      "sub_category": "디즈니 프린세스",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "노랑",
+        "공주",
+        "똑똑한",
+        "책",
+        "다정한"
+      ],
+      "image": "/images/58.svg"
+    },
+    {
+      "id": 59,
+      "name": "백설공주",
+      "emoji": "🍎",
+      "category": "애니메이션",
+      "sub_category": "디즈니 프린세스",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "빨강",
+        "공주",
+        "착한",
+        "다정한",
+        "클래식"
+      ],
+      "image": "/images/59.svg"
+    },
+    {
+      "id": 60,
+      "name": "미키마우스",
+      "emoji": "🐭",
+      "category": "애니메이션",
+      "sub_category": "디즈니/픽사",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "검정",
+        "쥐",
+        "클래식",
+        "활발한",
+        "친근한"
+      ],
+      "image": "/images/60.svg"
+    },
+    {
+      "id": 61,
+      "name": "미니마우스",
+      "emoji": "🎀",
+      "category": "애니메이션",
+      "sub_category": "디즈니/픽사",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "분홍색",
+        "쥐",
+        "리본",
+        "귀여운",
+        "다정한"
+      ],
+      "image": "/images/61.svg"
+    },
+    {
+      "id": 62,
+      "name": "우디",
+      "emoji": "🤠",
+      "category": "애니메이션",
+      "sub_category": "디즈니/픽사",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "보안관",
+        "리더십",
+        "용감한",
+        "갈색",
+        "장난감"
+      ],
+      "image": "/images/62.svg"
+    },
+    {
+      "id": 63,
+      "name": "버즈",
+      "emoji": "🚀",
+      "category": "애니메이션",
+      "sub_category": "디즈니/픽사",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "우주",
+        "파랑",
+        "용감한",
+        "모험",
+        "멋진"
+      ],
+      "image": "/images/63.svg"
+    },
+    {
+      "id": 64,
+      "name": "니모",
+      "emoji": "🐠",
+      "category": "애니메이션",
+      "sub_category": "디즈니/픽사",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "주황",
+        "물고기",
+        "바다",
+        "귀여운",
+        "탐험"
+      ],
+      "image": "/images/64.svg"
+    },
+    {
+      "id": 65,
+      "name": "올라프",
+      "emoji": "⛄",
+      "category": "애니메이션",
+      "sub_category": "디즈니/픽사",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "하양",
+        "눈사람",
+        "웃긴",
+        "엉뚱한",
+        "다정한"
+      ],
+      "image": "/images/65.svg"
+    },
+    {
+      "id": 66,
+      "name": "짱구",
+      "emoji": "🖍️",
+      "category": "애니메이션",
+      "sub_category": "짱구는 못말려",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "엉뚱한",
+        "장난꾸러기",
+        "웃긴",
+        "빨강",
+        "활발한"
+      ],
+      "image": "/images/66.svg"
+    },
+    {
+      "id": 67,
+      "name": "흰둥이",
+      "emoji": "🐶",
+      "category": "애니메이션",
+      "sub_category": "짱구는 못말려",
+      "target_gender": "공통",
+      "target_age": "저학년",
+      "keywords": [
+        "강아지",
+        "하양",
+        "귀여운",
+        "다정한",
+        "엉뚱한"
+      ],
+      "image": "/images/67.svg"
+    },
+    {
+      "id": 68,
+      "name": "짱아",
+      "emoji": "👶",
+      "category": "애니메이션",
+      "sub_category": "짱구는 못말려",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "아기",
+        "귀여운",
+        "분홍색",
+        "장난꾸러기"
+      ],
+      "image": "/images/68.svg"
+    },
+    {
+      "id": 69,
+      "name": "철수",
+      "emoji": "🤓",
+      "category": "애니메이션",
+      "sub_category": "짱구는 못말려",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "똑똑한",
+        "안경",
+        "진지한",
+        "파랑",
+        "친구"
+      ],
+      "image": "/images/69.svg"
+    },
+    {
+      "id": 70,
+      "name": "뽀로로",
+      "emoji": "🐧",
+      "category": "애니메이션",
+      "sub_category": "뽀롱뽀롱 뽀로로",
+      "target_gender": "공통",
+      "target_age": "유치원",
+      "keywords": [
+        "펭귄",
+        "파랑",
+        "활발한",
+        "장난꾸러기",
+        "모험"
+      ],
+      "image": "/images/70.svg"
+    },
+    {
+      "id": 71,
+      "name": "크롱",
+      "emoji": "🦖",
+      "category": "애니메이션",
+      "sub_category": "뽀롱뽀롱 뽀로로",
+      "target_gender": "남아",
+      "target_age": "유치원",
+      "keywords": [
+        "공룡",
+        "초록색",
+        "장난꾸러기",
+        "엉뚱한",
+        "귀여운"
+      ],
+      "image": "/images/71.svg"
+    },
+    {
+      "id": 72,
+      "name": "에디",
+      "emoji": "🦊",
+      "category": "애니메이션",
+      "sub_category": "뽀롱뽀롱 뽀로로",
+      "target_gender": "남아",
+      "target_age": "유치원",
+      "keywords": [
+        "여우",
+        "똑똑한",
+        "갈색",
+        "발명",
+        "진지한"
+      ],
+      "image": "/images/72.svg"
+    },
+    {
+      "id": 73,
+      "name": "루피",
+      "emoji": "🦫",
+      "category": "애니메이션",
+      "sub_category": "뽀롱뽀롱 뽀로로",
+      "target_gender": "여아",
+      "target_age": "유치원",
+      "keywords": [
+        "분홍색",
+        "비버",
+        "수줍은",
+        "다정한",
+        "요리"
+      ],
+      "image": "/images/73.svg"
+    },
+    {
+      "id": 74,
+      "name": "패티",
+      "emoji": "🐧",
+      "category": "애니메이션",
+      "sub_category": "뽀롱뽀롱 뽀로로",
+      "target_gender": "여아",
+      "target_age": "유치원",
+      "keywords": [
+        "펭귄",
+        "분홍색",
+        "활발한",
+        "리더십",
+        "다정한"
+      ],
+      "image": "/images/74.svg"
+    },
+    {
+      "id": 75,
+      "name": "포비",
+      "emoji": "🐻‍❄️",
+      "category": "애니메이션",
+      "sub_category": "뽀롱뽀롱 뽀로로",
+      "target_gender": "남아",
+      "target_age": "유치원",
+      "keywords": [
+        "곰",
+        "하양",
+        "느긋한",
+        "다정한",
+        "힘센"
+      ],
+      "image": "/images/75.svg"
+    },
+    {
+      "id": 76,
+      "name": "차탄",
+      "emoji": "🚗",
+      "category": "캐릭터 완구",
+      "sub_category": "헬로카봇",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "로봇",
+        "빨강",
+        "멋진",
+        "용감한"
+      ],
+      "image": "/images/76.svg"
+    },
+    {
+      "id": 77,
+      "name": "펜타스톰",
+      "emoji": "🚓",
+      "category": "캐릭터 완구",
+      "sub_category": "헬로카봇",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "로봇",
+        "파랑",
+        "강한",
+        "리더십"
+      ],
+      "image": "/images/77.svg"
+    },
+    {
+      "id": 78,
+      "name": "스카이révolution",
+      "emoji": "✈️",
+      "category": "캐릭터 완구",
+      "sub_category": "헬로카봇",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "로봇",
+        "하늘",
+        "멋진",
+        "빠른"
+      ],
+      "image": "/images/78.svg"
+    },
+    {
+      "id": 79,
+      "name": "또봇 X",
+      "emoji": "🤖",
+      "category": "캐릭터 완구",
+      "sub_category": "또봇",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "로봇",
+        "파랑",
+        "멋진",
+        "용감한"
+      ],
+      "image": "/images/79.svg"
+    },
+    {
+      "id": 80,
+      "name": "또봇 Y",
+      "emoji": "🤖",
+      "category": "캐릭터 완구",
+      "sub_category": "또봇",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "로봇",
+        "빨강",
+        "강한",
+        "활발한"
+      ],
+      "image": "/images/80.svg"
+    },
+    {
+      "id": 81,
+      "name": "또봇 Z",
+      "emoji": "🤖",
+      "category": "캐릭터 완구",
+      "sub_category": "또봇",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "로봇",
+        "노랑",
+        "리더십",
+        "진지한"
+      ],
+      "image": "/images/81.svg"
+    },
+    {
+      "id": 82,
+      "name": "볼트",
+      "emoji": "🦖",
+      "category": "애니메이션",
+      "sub_category": "미니특공대",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "공룡",
+        "빨강",
+        "리더십",
+        "용감한"
+      ],
+      "image": "/images/82.svg"
+    },
+    {
+      "id": 83,
+      "name": "맥스",
+      "emoji": "🦅",
+      "category": "애니메이션",
+      "sub_category": "미니특공대",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "독수리",
+        "파랑",
+        "멋진",
+        "빠른"
+      ],
+      "image": "/images/83.svg"
+    },
+    {
+      "id": 84,
+      "name": "루시",
+      "emoji": "🦄",
+      "category": "애니메이션",
+      "sub_category": "미니특공대",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "유니콘",
+        "분홍색",
+        "마법",
+        "다정한"
+      ],
+      "image": "/images/84.svg"
+    },
+    {
+      "id": 85,
+      "name": "새미",
+      "emoji": "🐯",
+      "category": "애니메이션",
+      "sub_category": "미니특공대",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "변신",
+        "호랑이",
+        "노랑",
+        "강한",
+        "장난꾸러기"
+      ],
+      "image": "/images/85.svg"
+    },
+    {
+      "id": 86,
+      "name": "라이언",
+      "emoji": "🦁",
+      "category": "캐릭터",
+      "sub_category": "카카오프렌즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "사자",
+        "갈색",
+        "리더십",
+        "든든한",
+        "귀여운"
+      ],
+      "image": "/images/86.svg"
+    },
+    {
+      "id": 87,
+      "name": "어피치",
+      "emoji": "🍑",
+      "category": "캐릭터",
+      "sub_category": "카카오프렌즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "복숭아",
+        "분홍색",
+        "엉뚱한",
+        "귀여운",
+        "장난꾸러기"
+      ],
+      "image": "/images/87.svg"
+    },
+    {
+      "id": 88,
+      "name": "무지",
+      "emoji": "🐰",
+      "category": "캐릭터",
+      "sub_category": "카카오프렌즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "노랑",
+        "토끼",
+        "순수한",
+        "귀여운",
+        "다정한"
+      ],
+      "image": "/images/88.svg"
+    },
+    {
+      "id": 89,
+      "name": "춘식이",
+      "emoji": "🍠",
+      "category": "캐릭터",
+      "sub_category": "카카오프렌즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "고양이",
+        "노랑",
+        "느긋한",
+        "웃긴",
+        "귀여운"
+      ],
+      "image": "/images/89.svg"
+    },
+    {
+      "id": 90,
+      "name": "네오",
+      "emoji": "🐱",
+      "category": "캐릭터",
+      "sub_category": "카카오프렌즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "고양이",
+        "보라색",
+        "스타일리시",
+        "새침한",
+        "멋진"
+      ],
+      "image": "/images/90.svg"
+    },
+    {
+      "id": 91,
+      "name": "브라운",
+      "emoji": "🐻",
+      "category": "캐릭터",
+      "sub_category": "라인프렌즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "곰",
+        "갈색",
+        "조용한",
+        "든든한",
+        "귀여운"
+      ],
+      "image": "/images/91.svg"
+    },
+    {
+      "id": 92,
+      "name": "코니",
+      "emoji": "🐰",
+      "category": "캐릭터",
+      "sub_category": "라인프렌즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "토끼",
+        "하양",
+        "활발한",
+        "귀여운",
+        "다정한"
+      ],
+      "image": "/images/92.svg"
+    },
+    {
+      "id": 93,
+      "name": "샐리",
+      "emoji": "🐤",
+      "category": "캐릭터",
+      "sub_category": "라인프렌즈",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "병아리",
+        "노랑",
+        "엉뚱한",
+        "웃긴",
+        "귀여운"
+      ],
+      "image": "/images/93.svg"
+    },
+    {
+      "id": 94,
+      "name": "초코",
+      "emoji": "🐶",
+      "category": "캐릭터",
+      "sub_category": "라인프렌즈",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "강아지",
+        "갈색",
+        "활발한",
+        "귀여운",
+        "다정한"
+      ],
+      "image": "/images/94.svg"
+    },
+    {
+      "id": 95,
+      "name": "마리오",
+      "emoji": "🍄",
+      "category": "게임",
+      "sub_category": "슈퍼마리오",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "빨강",
+        "모험",
+        "점프",
+        "용감한",
+        "클래식"
+      ],
+      "image": "/images/95.svg"
+    },
+    {
+      "id": 96,
+      "name": "루이지",
+      "emoji": "🟢",
+      "category": "게임",
+      "sub_category": "슈퍼마리오",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "초록색",
+        "모험",
+        "점프",
+        "다정한",
+        "조용한"
+      ],
+      "image": "/images/96.svg"
+    },
+    {
+      "id": 97,
+      "name": "요시",
+      "emoji": "🦕",
+      "category": "게임",
+      "sub_category": "슈퍼마리오",
+      "target_gender": "공통",
+      "target_age": "전학년",
+      "keywords": [
+        "초록색",
+        "공룡",
+        "귀여운",
+        "활발한",
+        "모험"
+      ],
+      "image": "/images/97.svg"
+    },
+    {
+      "id": 98,
+      "name": "쿠파",
+      "emoji": "🐢",
+      "category": "게임",
+      "sub_category": "슈퍼마리오",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "거북이",
+        "강한",
+        "무서운",
+        "주황",
+        "보스"
+      ],
+      "image": "/images/98.svg"
+    },
+    {
+      "id": 99,
+      "name": "피치공주",
+      "emoji": "👑",
+      "category": "게임",
+      "sub_category": "슈퍼마리오",
+      "target_gender": "여아",
+      "target_age": "전학년",
+      "keywords": [
+        "분홍색",
+        "공주",
+        "다정한",
+        "우아한",
+        "마법"
+      ],
+      "image": "/images/99.svg"
+    },
+    {
+      "id": 100,
+      "name": "쥬쥬",
+      "emoji": "💄",
+      "category": "애니메이션",
+      "sub_category": "시크릿쥬쥬",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "분홍색",
+        "변신",
+        "마법",
+        "공주",
+        "스타일리시"
+      ],
+      "image": "/images/100.svg"
+    },
+    {
+      "id": 101,
+      "name": "나나",
+      "emoji": "💛",
+      "category": "애니메이션",
+      "sub_category": "시크릿쥬쥬",
+      "target_gender": "여아",
+      "target_age": "저학년",
+      "keywords": [
+        "노랑",
+        "변신",
+        "활발한",
+        "마법",
+        "다정한"
+      ],
+      "image": "/images/101.svg"
+    },
+    {
+      "id": 102,
+      "name": "레드",
+      "emoji": "🔴",
+      "category": "애니메이션",
+      "sub_category": "라바",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "빨강",
+        "애벌레",
+        "웃긴",
+        "장난꾸러기",
+        "엉뚱한"
+      ],
+      "image": "/images/102.svg"
+    },
+    {
+      "id": 103,
+      "name": "옐로",
+      "emoji": "🟡",
+      "category": "애니메이션",
+      "sub_category": "라바",
+      "target_gender": "남아",
+      "target_age": "저학년",
+      "keywords": [
+        "노랑",
+        "애벌레",
+        "웃긴",
+        "순수한",
+        "엉뚱한"
+      ],
+      "image": "/images/103.svg"
+    },
+    {
+      "id": 104,
+      "name": "핑크퐁",
+      "emoji": "🦊",
+      "category": "캐릭터",
+      "sub_category": "핑크퐁/아기상어",
+      "target_gender": "공통",
+      "target_age": "유치원",
+      "keywords": [
+        "분홍색",
+        "여우",
+        "노래",
+        "활발한",
+        "귀여운"
+      ],
+      "image": "/images/104.svg"
+    },
+    {
+      "id": 105,
+      "name": "아기상어",
+      "emoji": "🦈",
+      "category": "캐릭터",
+      "sub_category": "핑크퐁/아기상어",
+      "target_gender": "공통",
+      "target_age": "유치원",
+      "keywords": [
+        "노랑",
+        "상어",
+        "노래",
+        "바다",
+        "귀여운"
+      ],
+      "image": "/images/105.svg"
+    },
+    {
+      "id": 106,
+      "name": "호기",
+      "emoji": "🦊",
+      "category": "캐릭터",
+      "sub_category": "핑크퐁/아기상어",
+      "target_gender": "남아",
+      "target_age": "유치원",
+      "keywords": [
+        "파랑",
+        "여우",
+        "활발한",
+        "장난꾸러기",
+        "귀여운"
+      ],
+      "image": "/images/106.svg"
+    },
+    {
+      "id": 107,
+      "name": "레드새",
+      "emoji": "🐦",
+      "category": "애니메이션",
+      "sub_category": "앵그리버드",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "빨강",
+        "새",
+        "화난",
+        "용감한",
+        "리더십"
+      ],
+      "image": "/images/107.svg"
+    },
+    {
+      "id": 108,
+      "name": "척",
+      "emoji": "💨",
+      "category": "애니메이션",
+      "sub_category": "앵그리버드",
+      "target_gender": "남아",
+      "target_age": "전학년",
+      "keywords": [
+        "노랑",
+        "새",
+        "빠른",
+        "엉뚱한",
+        "장난꾸러기"
+      ],
+      "image": "/images/108.svg"
+    }
+  ]
+}

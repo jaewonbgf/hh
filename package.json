@@ -1,0 +1,14 @@
+{
+  "name": "character-finder",
+  "version": "0.1.0",
+  "description": "아이들을 위한 캐릭터 추천 챗봇 (산리오풍, 룰베이스 프로토타입)",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
