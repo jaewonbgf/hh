@@ -111,6 +111,123 @@
   }
   .egg:hover { opacity: .9; transform: scale(1.25) rotate(10deg); filter: none; }
   .egg:active { transform: scale(.85); }
+
+  /* 🏃 모험 버튼 (결과 화면) */
+  .btn-adventure {
+    margin-top: 14px; border: none; cursor: pointer; font-family: 'Jua', sans-serif;
+    background: linear-gradient(#ffd36b, #ff9f43); color: #7a4a00; font-size: 1.2rem;
+    padding: 15px 26px; border-radius: 999px; box-shadow: 0 6px 0 #e07b1e;
+    display: inline-flex; align-items: center; gap: 8px; line-height: 1.2;
+  }
+  .btn-adventure:active { transform: translateY(6px); box-shadow: 0 0 0 #e07b1e; }
+  .btn-leaderboard-open {
+    margin-top: 10px; border: none; cursor: pointer; font-family: 'Jua', sans-serif;
+    background: #fff; color: #c07; font-size: 1rem; padding: 10px 20px;
+    border-radius: 999px; box-shadow: 0 4px 0 #ffd0e6; border: 2px solid #ffd0e6;
+  }
+  .btn-leaderboard-open:active { transform: translateY(4px); box-shadow: 0 0 0 #ffd0e6; }
+
+  /* 🎮 게임 오버레이 */
+  .game-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: linear-gradient(160deg, #bfe3ff 0%, #e7f4ff 55%, #fff3d6 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 10px;
+  }
+  .game-stage {
+    position: relative; width: 100%; max-width: 720px;
+    border-radius: 22px; overflow: hidden;
+    box-shadow: 0 14px 40px rgba(80,110,160,.35); background: #d8efff;
+    border: 4px solid #fff;
+  }
+  #gameCanvas { display: block; width: 100%; height: auto; touch-action: none; background: transparent; }
+
+  .game-hud {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 10px 14px; font-family: 'Jua', sans-serif; pointer-events: none;
+    text-shadow: 0 2px 3px rgba(0,0,0,.18); color: #41506b; font-size: 1.05rem;
+  }
+  .game-hud .hud-chip {
+    background: rgba(255,255,255,.85); border-radius: 999px; padding: 4px 12px;
+    box-shadow: 0 3px 6px rgba(80,110,160,.2); text-shadow: none; color: #41506b;
+  }
+  .game-hud .hud-time { color: #e0568a; font-weight: bold; }
+
+  /* 게임 안내/종료 화면 (캔버스 위 오버레이) */
+  .game-screen {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px; text-align: center;
+    background: rgba(255,255,255,.82); backdrop-filter: blur(2px);
+    padding: 22px 18px; overflow-y: auto;
+    font-family: 'Jua', sans-serif; color: #5a4a66;
+  }
+  .game-screen.hidden { display: none; }
+  .gs-title { font-family: 'Gaegu', sans-serif; font-size: 2rem; color: #ff7bb0; margin: 0; }
+  .gs-sub { font-size: 1.05rem; color: #7a6a8a; margin: 0; line-height: 1.6; }
+  .gs-score { font-size: 2.6rem; color: #ff5fa2; font-family: 'Gaegu', sans-serif; margin: 4px 0; }
+  .gs-hero { width: 92px; height: 92px; border-radius: 20px; object-fit: cover;
+    box-shadow: 0 6px 14px rgba(180,120,160,.3); }
+  .gs-btn {
+    border: none; cursor: pointer; font-family: 'Jua', sans-serif; font-size: 1.2rem;
+    padding: 13px 28px; border-radius: 999px; color: #fff;
+    background: linear-gradient(#ff96c2, #ff6fa6); box-shadow: 0 5px 0 #e0568a;
+  }
+  .gs-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #e0568a; }
+  .gs-btn.go { background: linear-gradient(#7ed957, #4caf50); box-shadow: 0 5px 0 #3a8a3f; }
+  .gs-btn.go:active { box-shadow: 0 0 0 #3a8a3f; }
+  .gs-btn.ghost { background: #fff; color: #c07; box-shadow: 0 4px 0 #ffd0e6; border: 2px solid #ffd0e6; }
+  .gs-btn.ghost:active { box-shadow: 0 0 0 #ffd0e6; }
+  .gs-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .gs-howto { font-size: .95rem; color: #8a7a9a; background: #fff6fb; border: 2px dashed #ffc4e0;
+    border-radius: 16px; padding: 10px 14px; max-width: 380px; line-height: 1.6; }
+
+  .name-input {
+    font-family: 'Jua', sans-serif; font-size: 1.2rem; text-align: center;
+    border: 3px solid #ffd0e6; border-radius: 16px; padding: 10px 14px; width: 220px;
+    color: #6b5060; outline: none; background: #fff;
+  }
+  .name-input:focus { border-color: #ff7bb0; }
+
+  /* 🏆 리더보드 */
+  .board-wrap { width: 100%; max-width: 420px; }
+  .board-title { font-family: 'Gaegu', sans-serif; color: #b07; font-size: 1.4rem; margin: 4px 0 8px; }
+  .board-note { font-size: .82rem; color: #a98; margin: 0 0 8px; }
+  .board-list { list-style: none; margin: 0; padding: 0; max-height: 46vh; overflow-y: auto; }
+  .board-list li {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin-bottom: 6px;
+    background: #fff; border-radius: 14px; box-shadow: 0 3px 0 rgba(255,200,225,.5);
+    font-size: 1.02rem; color: #5a4a66;
+  }
+  .board-list li.me { background: #fff0f7; box-shadow: 0 3px 0 #ffb3d4; border: 2px solid #ff9ec8; }
+  .board-rank { width: 30px; text-align: center; font-weight: bold; color: #ff7bb0; flex: none; }
+  .board-rank.r1 { color: #f5b301; } .board-rank.r2 { color: #9aa7b5; } .board-rank.r3 { color: #cd7f32; }
+  .board-name { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .board-char { font-size: .82rem; color: #a98fc0; flex: none; max-width: 96px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .board-score { font-weight: bold; color: #e0568a; flex: none; }
+  .board-empty { color: #a98; padding: 16px; }
+
+  /* 👑 엔딩 연출(완주 시 왕이 공주를 구해줘 고마워하는 장면) */
+  .ending-scene {
+    width: 100%; max-width: 420px;
+    background: linear-gradient(160deg, #fff6da, #ffe9f4);
+    border: 3px solid #ffd86b; border-radius: 22px; padding: 14px 16px;
+    box-shadow: 0 6px 0 rgba(255,200,110,.5); animation: pop .5s ease;
+  }
+  .ending-cast { display: flex; align-items: flex-end; justify-content: center; gap: 18px; margin-bottom: 8px; }
+  .cast { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .cast-emoji { font-size: 3.2rem; line-height: 1; filter: drop-shadow(0 4px 5px rgba(0,0,0,.15)); }
+  .cast-king { animation: bob 2s ease-in-out infinite; }
+  .cast-img { width: 72px; height: 72px; border-radius: 16px; object-fit: cover;
+    border: 3px solid #fff; box-shadow: 0 4px 10px rgba(180,120,160,.3); }
+  .cast-label { font-size: .82rem; color: #a06; background: #fff; border-radius: 999px;
+    padding: 2px 10px; box-shadow: 0 2px 0 #ffd0e6; }
+  .ending-speech {
+    position: relative; background: #fff; border: 2px solid #ffd86b; border-radius: 16px;
+    padding: 12px 14px; color: #8a5a2a; font-size: 1.08rem; line-height: 1.6; text-align: center;
+  }
+  .ending-speech b { color: #e0568a; }
 </style>
 </head>
 <body>
@@ -127,9 +244,24 @@
   <!-- 보일듯말듯한 비밀의 알 → 이브이 -->
   <div class="egg" id="egg" onclick="showEevee()" title="?">🥚</div>
 
+  <!-- 🎮 모험 게임 오버레이 -->
+  <div class="game-overlay" id="gameOverlay" style="display:none">
+    <div class="game-stage">
+      <canvas id="gameCanvas"></canvas>
+      <div class="game-hud" id="gameHud" style="display:none">
+        <span class="hud-chip hud-time">⏱ <span id="hudTime">20</span>초</span>
+        <span class="hud-chip">🪙 <span id="hudCoins">0</span></span>
+        <span class="hud-chip">❤️ <span id="hudHearts">3</span></span>
+        <span class="hud-chip">⭐ <span id="hudScore">0</span></span>
+      </div>
+      <div class="game-screen" id="gameScreen"></div>
+    </div>
+  </div>
+
 <script>
 let answers = {};
 let step = 0;
+let lastTop = null; // 마지막으로 추천된 캐릭터(모험 게임 주인공)
 const MASCOTS = ["🐰","🤍","💜","🐶","🐱","🎀","⭐","🌈"];
 
 // ── 캐릭터 데이터 로드 (한 번만 받아서 캐시) ──────────────
@@ -375,6 +507,7 @@ async function showEevee(){
   try {
     const all = await loadCharacters();
     const top = all.find(c => c.name === "이브이") || all[0];
+    lastTop = top;
     const pool = all.filter(c => c.id !== top.id);
     const runners = [];
     while (runners.length < 2 && pool.length) {
@@ -398,7 +531,9 @@ async function showEevee(){
         앞으로 <b>해나·해성</b>이랑 캐릭터 놀이하면서 친하게 지내자~<br>
         와줘서 고마워! 🎀✨
       </div>
-      <button class="btn-again" onclick="restart()">🔄 처음으로</button>
+      <button class="btn-adventure" onclick="startAdventure()">🏃 이 캐릭터로 모험을 떠나볼래요?</button>
+      <br><button class="btn-leaderboard-open" onclick="openLeaderboard()">🏆 누적 랭킹 보기</button>
+      <br><button class="btn-again" onclick="restart()">🔄 처음으로</button>
     `;
   } catch (e) {
     say("앗, 알이 깨지지 않아 😢");
@@ -437,6 +572,7 @@ async function showResult(){
   document.getElementById("app").innerHTML = `<div style="font-size:4rem;">🎀</div><div style="color:#b48;">잠깐만 기다려줘~</div>`;
   try {
     const { top, runners } = await recommend(answers);
+    lastTop = top;
     say("두구두구... 찾았다! 🎉");
     document.getElementById("app").innerHTML = `
       <img class="result-img" src="${top.image}" alt="${top.name}"
@@ -455,7 +591,9 @@ async function showResult(){
         앞으로 <b>해나·해성</b>이랑 캐릭터 놀이하면서 친하게 지내자~<br>
         와줘서 고마워! 🎀✨
       </div>
-      <button class="btn-again" onclick="restart()">🔄 다시 찾기</button>
+      <button class="btn-adventure" onclick="startAdventure()">🏃 이 캐릭터로 모험을 떠나볼래요?</button>
+      <br><button class="btn-leaderboard-open" onclick="openLeaderboard()">🏆 누적 랭킹 보기</button>
+      <br><button class="btn-again" onclick="restart()">🔄 다시 찾기</button>
     `;
   } catch (e) {
     say("앗, 문제가 생겼어 😢");
@@ -465,6 +603,512 @@ async function showResult(){
 }
 
 function restart(){ step=0; answers={}; renderIntro(); }
+
+/* ════════════════════════════════════════════════════════════
+   🎮 모험 게임 (20초 횡스크롤 러너) + 🏆 누적 랭킹
+   ════════════════════════════════════════════════════════════ */
+
+const GAME = {
+  canvas:null, ctx:null, W:0, H:0, dpr:1,
+  raf:0, running:false, last:0, elapsed:0,
+  groundY:0, speed:0,
+  player:null, obstacles:[], coins:[], pops:[],
+  spawnObs:0, spawnCoin:0,
+  coinCount:0, score:0, hearts:3, inv:0,
+  heroUrl:"", heroEmoji:"⭐", heroImg:null, heroReady:false,
+  submitted:false,
+};
+const DUR = 20;          // 게임 길이(초)
+const GRAVITY = 2300;
+const JUMP_V = -780;
+const MAX_JUMPS = 2;
+
+function $g(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+// ── 진입점: 결과 화면의 모험 버튼 ───────────────────────────
+function startAdventure(){
+  if(!lastTop){ return; }
+  GAME.heroUrl = lastTop.image || "";
+  GAME.heroEmoji = lastTop.emoji || "⭐";
+  GAME.heroImg = null; GAME.heroReady = false;
+  if(GAME.heroUrl){
+    const im = new Image();
+    im.onload = ()=>{ GAME.heroReady = true; };
+    im.onerror = ()=>{ GAME.heroReady = false; };
+    im.src = GAME.heroUrl;
+    GAME.heroImg = im;
+  }
+  openOverlay();
+  showReadyScreen();
+}
+
+// 결과 화면에서 바로 랭킹만 보기
+function openLeaderboard(){
+  openOverlay();
+  showBoardOnly();
+}
+
+function openOverlay(){
+  $g("gameOverlay").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+function closeAdventure(){
+  stopLoop();
+  $g("gameOverlay").style.display = "none";
+  document.body.style.overflow = "";
+}
+
+function setHud(show){
+  $g("gameHud").style.display = show ? "flex" : "none";
+}
+function updateHud(){
+  $g("hudTime").textContent = Math.max(0, Math.ceil(DUR - GAME.elapsed));
+  $g("hudCoins").textContent = GAME.coinCount;
+  $g("hudHearts").textContent = GAME.hearts;
+  $g("hudScore").textContent = GAME.score;
+}
+
+function heroImgTag(cls){
+  return `<img class="${cls}" src="${esc(GAME.heroUrl)}" alt="hero"
+    onerror="this.replaceWith(Object.assign(document.createElement('div'),{textContent:'${esc(GAME.heroEmoji)}',style:'font-size:4rem'}))">`;
+}
+
+// ── 준비 화면 ───────────────────────────────────────────────
+function showReadyScreen(){
+  setHud(false);
+  const s = $g("gameScreen");
+  s.classList.remove("hidden");
+  s.innerHTML = `
+    <h2 class="gs-title">공주를 구하러! 🏁</h2>
+    ${heroImgTag("gs-hero")}
+    <p class="gs-sub"><b>${esc(lastTop ? lastTop.name : "친구")}</b>와(과) 함께<br><b>해나 공주</b>를 구하러 ${DUR}초 모험을 떠나요! 👸</p>
+    <div class="gs-howto">
+      화면을 <b>탭</b>(또는 스페이스바)하면 <b>점프</b> 🦘<br>
+      🪙 코인은 먹고, 🌵 장애물은 피해요!<br>
+      ❤️ 하트 3개를 다 잃으면 끝나요.<br>
+      ${DUR}초를 버티면 <b>공주를 구하고 왕을 만나요!</b> 👑
+    </div>
+    <div class="gs-row">
+      <button class="gs-btn go" onclick="beginRun()">▶ 출발!</button>
+      <button class="gs-btn ghost" onclick="closeAdventure()">닫기</button>
+    </div>`;
+}
+
+// ── 캔버스 크기 설정 ────────────────────────────────────────
+function sizeCanvas(){
+  const stage = GAME.canvas.parentElement;
+  const cssW = stage.clientWidth || 360;
+  const cssH = Math.max(240, Math.min(430, Math.round(cssW * 0.62)));
+  GAME.dpr = window.devicePixelRatio || 1;
+  GAME.canvas.style.height = cssH + "px";
+  GAME.canvas.width = Math.round(cssW * GAME.dpr);
+  GAME.canvas.height = Math.round(cssH * GAME.dpr);
+  GAME.ctx.setTransform(GAME.dpr, 0, 0, GAME.dpr, 0, 0);
+  GAME.W = cssW; GAME.H = cssH;
+  GAME.groundY = cssH - 46;
+}
+
+// ── 게임 시작 ───────────────────────────────────────────────
+function beginRun(){
+  GAME.canvas = $g("gameCanvas");
+  GAME.ctx = GAME.canvas.getContext("2d");
+  sizeCanvas();
+
+  const size = Math.max(46, Math.min(74, Math.round(GAME.H * 0.2)));
+  GAME.player = {
+    x: Math.max(54, Math.round(GAME.W * 0.16)),
+    size, y: GAME.groundY - size, vy: 0, jumps: 0, onGround: true,
+  };
+  GAME.obstacles = []; GAME.coins = []; GAME.pops = [];
+  GAME.spawnObs = 0.8; GAME.spawnCoin = 0.5;
+  GAME.coinCount = 0; GAME.score = 0; GAME.hearts = 3; GAME.inv = 0;
+  GAME.elapsed = 0; GAME.speed = 250; GAME.submitted = false;
+
+  $g("gameScreen").classList.add("hidden");
+  setHud(true); updateHud();
+
+  bindInput(true);
+  GAME.running = true;
+  GAME.last = 0;
+  GAME.raf = requestAnimationFrame(loop);
+}
+
+function stopLoop(){
+  GAME.running = false;
+  if(GAME.raf) cancelAnimationFrame(GAME.raf);
+  GAME.raf = 0;
+  bindInput(false);
+}
+
+// ── 입력(점프) ──────────────────────────────────────────────
+function doJump(){
+  const p = GAME.player;
+  if(!p || !GAME.running) return;
+  if(p.jumps < MAX_JUMPS){ p.vy = JUMP_V; p.jumps++; p.onGround = false; }
+}
+function onKey(e){
+  if(e.code === "Space" || e.code === "ArrowUp" || e.key === " "){ e.preventDefault(); doJump(); }
+}
+function onPointer(e){ e.preventDefault(); doJump(); }
+function bindInput(on){
+  const c = GAME.canvas;
+  if(on){
+    window.addEventListener("keydown", onKey);
+    if(c) c.addEventListener("pointerdown", onPointer);
+  } else {
+    window.removeEventListener("keydown", onKey);
+    if(c) c.removeEventListener("pointerdown", onPointer);
+  }
+}
+
+// ── 스폰 ────────────────────────────────────────────────────
+function spawnObstacle(){
+  const h = 28 + Math.floor(Math.random() * 38);   // 28~66
+  const w = 22 + Math.floor(Math.random() * 18);
+  GAME.obstacles.push({ x: GAME.W + 30, w, h, y: GAME.groundY - h });
+}
+function spawnCoins(){
+  // 1개 또는 3개 아치형
+  const cluster = Math.random() < 0.5 ? 3 : 1;
+  const baseY = GAME.groundY - (36 + Math.floor(Math.random() * 110));
+  for(let i = 0; i < cluster; i++){
+    const arc = cluster === 3 ? -Math.sin((i / 2) * Math.PI) * 34 : 0;
+    GAME.coins.push({ x: GAME.W + 30 + i * 34, y: baseY + arc, r: 13, taken: false });
+  }
+}
+
+// ── 메인 루프 ───────────────────────────────────────────────
+function loop(t){
+  if(!GAME.running) return;
+  if(!GAME.last) GAME.last = t;
+  let dt = (t - GAME.last) / 1000;
+  GAME.last = t;
+  if(dt > 0.05) dt = 0.05;        // 탭 전환 후 점프 방지
+
+  GAME.elapsed += dt;
+  GAME.speed = 250 + Math.min(GAME.elapsed, DUR) / DUR * 175;
+  update(dt);
+  render();
+  updateHud();
+
+  if(GAME.elapsed >= DUR){ endRun(true); return; }
+  GAME.raf = requestAnimationFrame(loop);
+}
+
+function update(dt){
+  const p = GAME.player, g = GAME;
+  // 물리
+  p.vy += GRAVITY * dt;
+  p.y += p.vy * dt;
+  const floorTop = g.groundY - p.size;
+  if(p.y >= floorTop){ p.y = floorTop; p.vy = 0; p.jumps = 0; p.onGround = true; }
+  else p.onGround = false;
+  if(g.inv > 0) g.inv -= dt;
+
+  // 스폰 타이머
+  g.spawnObs -= dt;
+  if(g.spawnObs <= 0){
+    spawnObstacle();
+    g.spawnObs = Math.max(0.7, 1.45 - g.elapsed * 0.03) + Math.random() * 0.5;
+  }
+  g.spawnCoin -= dt;
+  if(g.spawnCoin <= 0){ spawnCoins(); g.spawnCoin = 0.7 + Math.random() * 0.7; }
+
+  // 이동 + 충돌
+  const pad = p.size * 0.16;
+  const pb = { x: p.x + pad, y: p.y + pad, w: p.size - pad * 2, h: p.size - pad * 2 };
+
+  for(const o of g.obstacles){
+    o.x -= g.speed * dt;
+    if(g.inv <= 0 &&
+       pb.x < o.x + o.w && pb.x + pb.w > o.x &&
+       pb.y < o.y + o.h && pb.y + pb.h > o.y){
+      g.hearts--; g.inv = 1.0; p.vy = -340;
+      g.pops.push({ x: p.x + p.size / 2, y: p.y, life: 0.7, text: "-❤️", color: "#e74c6f" });
+      if(g.hearts <= 0){ render(); endRun(false); return; }
+    }
+  }
+  g.obstacles = g.obstacles.filter(o => o.x + o.w > -10);
+
+  const pcx = p.x + p.size / 2, pcy = p.y + p.size / 2, pr = p.size * 0.42;
+  for(const c of g.coins){
+    c.x -= g.speed * dt;
+    if(!c.taken){
+      const dx = c.x - pcx, dy = c.y - pcy;
+      if(dx * dx + dy * dy < (pr + c.r) * (pr + c.r)){
+        c.taken = true; g.coinCount++; g.score += 10;
+        g.pops.push({ x: c.x, y: c.y, life: 0.6, text: "+10", color: "#f5a201" });
+      }
+    }
+  }
+  g.coins = g.coins.filter(c => !c.taken && c.x + c.r > -10);
+
+  for(const pop of g.pops){ pop.life -= dt; pop.y -= 26 * dt; }
+  g.pops = g.pops.filter(pop => pop.life > 0);
+}
+
+// ── 렌더 ────────────────────────────────────────────────────
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function render(){
+  const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME;
+  // 하늘
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, "#bfe6ff"); sky.addColorStop(1, "#eaf7ff");
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+
+  // 구름 (느린 패럴럭스)
+  const cloudShift = (g.elapsed * 22) % (W + 120);
+  ctx.fillStyle = "rgba(255,255,255,.85)";
+  for(let i = 0; i < 3; i++){
+    const cx = ((i * (W / 2 + 80) - cloudShift) % (W + 120) + W + 120) % (W + 120) - 60;
+    const cy = 34 + i * 24;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 16, 0, 7); ctx.arc(cx + 18, cy + 4, 20, 0, 7); ctx.arc(cx + 40, cy, 15, 0, 7);
+    ctx.fill();
+  }
+  // 언덕
+  const hillShift = (g.elapsed * g.speed * 0.25) % 220;
+  ctx.fillStyle = "#bfe9c8";
+  for(let i = -1; i < W / 220 + 1; i++){
+    const hx = i * 220 - hillShift;
+    ctx.beginPath(); ctx.arc(hx + 110, gY + 20, 120, Math.PI, 0); ctx.fill();
+  }
+
+  // 땅
+  ctx.fillStyle = "#8ad08f"; ctx.fillRect(0, gY, W, H - gY);
+  ctx.fillStyle = "#73c07a"; ctx.fillRect(0, gY, W, 6);
+  // 땅 줄무늬(빠른 패럴럭스)
+  ctx.fillStyle = "rgba(255,255,255,.25)";
+  const stripe = (g.elapsed * g.speed) % 46;
+  for(let x = -stripe; x < W; x += 46) ctx.fillRect(x, gY + 16, 22, 5);
+
+  // 코인
+  for(const c of g.coins){
+    if(c.taken) continue;
+    ctx.fillStyle = "#ffd23f"; ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, 7); ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = "#f0a500"; ctx.stroke();
+    ctx.fillStyle = "#f0a500"; ctx.font = "bold " + Math.round(c.r) + "px Jua, sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("★", c.x, c.y + 1);
+  }
+
+  // 장애물 (선인장풍)
+  for(const o of g.obstacles){
+    ctx.fillStyle = "#3fae5a";
+    roundRect(ctx, o.x, o.y, o.w, o.h, Math.min(8, o.w / 2)); ctx.fill();
+    // 팔
+    if(o.h > 40){
+      const ay = o.y + o.h * 0.4;
+      roundRect(ctx, o.x - 7, ay, 7, Math.min(18, o.h * 0.3), 4); ctx.fill();
+      roundRect(ctx, o.x + o.w, ay + 6, 7, Math.min(18, o.h * 0.3), 4); ctx.fill();
+    }
+    ctx.fillStyle = "#2f9249"; ctx.fillRect(o.x + o.w * 0.3, o.y + 6, 3, o.h - 12);
+  }
+
+  // 그림자
+  const p = g.player;
+  const shY = gY - 4, sw = p.size * (0.5 + 0.4 * (1 - Math.min(1, (gY - p.size - p.y) / 130)));
+  ctx.fillStyle = "rgba(60,90,70,.18)";
+  ctx.beginPath(); ctx.ellipse(p.x + p.size / 2, shY, sw / 2, 6, 0, 0, 7); ctx.fill();
+
+  // 플레이어 (무적 중 깜빡임)
+  const blink = g.inv > 0 && Math.floor(g.elapsed * 14) % 2 === 0;
+  if(!blink){
+    const bob = p.onGround ? Math.abs(Math.sin(g.elapsed * 11)) * 3 : 0;
+    const py = p.y - bob;
+    ctx.save();
+    roundRect(ctx, p.x, py, p.size, p.size, 14); ctx.clip();
+    if(GAME.heroReady && GAME.heroImg){
+      ctx.drawImage(GAME.heroImg, p.x, py, p.size, p.size);
+    } else {
+      ctx.fillStyle = "#fff0f7"; ctx.fillRect(p.x, py, p.size, p.size);
+      ctx.fillStyle = "#000"; ctx.font = Math.round(p.size * 0.7) + "px serif";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(GAME.heroEmoji, p.x + p.size / 2, py + p.size / 2 + 2);
+    }
+    ctx.restore();
+    ctx.lineWidth = 3; ctx.strokeStyle = "#fff";
+    roundRect(ctx, p.x, py, p.size, p.size, 14); ctx.stroke();
+  }
+
+  // 점수 팝업
+  for(const pop of g.pops){
+    ctx.globalAlpha = Math.max(0, Math.min(1, pop.life * 2));
+    ctx.fillStyle = pop.color; ctx.font = "bold 18px Jua, sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(pop.text, pop.x, pop.y);
+    ctx.globalAlpha = 1;
+  }
+}
+
+// ── 종료 ────────────────────────────────────────────────────
+function endRun(success){
+  stopLoop();
+  let bonus = 0;
+  if(success){ bonus = 100 + GAME.hearts * 30; GAME.score += bonus; }
+  updateHud();
+  const lastName = (function(){ try{ return localStorage.getItem("hh_name") || ""; }catch(e){ return ""; } })();
+  setHud(false);
+  const heroName = lastTop ? lastTop.name : "용사";
+  const ending = success ? `
+    <div class="ending-scene">
+      <div class="ending-cast">
+        <div class="cast">
+          <div class="cast-emoji cast-king">🤴</div>
+          <div class="cast-label">👑 해나 아빠 왕</div>
+        </div>
+        <div class="cast">
+          <img class="cast-img" src="/img/hn.jpg" alt="해나 공주"
+            onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cast-emoji',textContent:'👸'}))">
+          <div class="cast-label">👸 해나 공주</div>
+        </div>
+      </div>
+      <div class="ending-speech">"오, 용감한 <b>${esc(heroName)}</b>! 🎉<br><b>해나 공주</b>를 무사히 구해줘서 고맙네!" 👑✨</div>
+    </div>` : "";
+  const s = $g("gameScreen");
+  s.classList.remove("hidden");
+  s.innerHTML = `
+    <h2 class="gs-title">${success ? "골인! 공주 구출 성공! 🎉" : "게임 끝! 🐾"}</h2>
+    ${ending}
+    ${success ? "" : heroImgTag("gs-hero")}
+    <div class="gs-score">⭐ ${GAME.score}점</div>
+    <p class="gs-sub">🪙 코인 ${GAME.coinCount}개 ${success ? "· 완주 보너스 +" + bonus + " 🏅" : "· 다음엔 더 멀리!"}</p>
+    <div class="gs-row">
+      <input id="nameInput" class="name-input" maxlength="12" placeholder="이름을 적어줘 ✏️" value="${esc(lastName)}">
+    </div>
+    <div class="gs-row">
+      <button class="gs-btn" id="submitBtn" onclick="submitMyScore()">🏆 랭킹 등록</button>
+      <button class="gs-btn ghost" onclick="beginRun()">🔄 다시 도전</button>
+      <button class="gs-btn ghost" onclick="closeAdventure()">닫기</button>
+    </div>
+    <div id="boardMount" class="board-wrap"></div>`;
+  renderBoardInto($g("boardMount"), null);
+}
+
+// ── 점수 등록 ───────────────────────────────────────────────
+async function submitMyScore(){
+  if(GAME.submitted) return;
+  const input = $g("nameInput");
+  const name = (input && input.value || "").trim() || "익명";
+  try{ localStorage.setItem("hh_name", name); }catch(e){}
+  GAME.submitted = true;
+  const btn = $g("submitBtn");
+  if(btn){ btn.disabled = true; btn.textContent = "등록 중..."; }
+  const entry = { name, score: GAME.score, character: lastTop ? lastTop.name : "" };
+  const res = await submitScore(entry);
+  if(btn){ btn.textContent = res.rank ? res.rank + "위 등록! 🎉" : "등록 완료! 🎉"; }
+  renderBoardInto($g("boardMount"), { name: entry.name, score: entry.score });
+}
+
+// ── 랭킹만 보기 화면 ────────────────────────────────────────
+function showBoardOnly(){
+  setHud(false);
+  const s = $g("gameScreen");
+  s.classList.remove("hidden");
+  s.innerHTML = `
+    <h2 class="gs-title">🏆 누적 랭킹</h2>
+    <div id="boardMount" class="board-wrap"></div>
+    <div class="gs-row">
+      ${lastTop ? '<button class="gs-btn go" onclick="startAdventure()">🏃 모험 하러가기</button>' : ""}
+      <button class="gs-btn ghost" onclick="closeAdventure()">닫기</button>
+    </div>`;
+  renderBoardInto($g("boardMount"), null);
+}
+
+/* ── 리더보드 API (실패 시 localStorage 폴백) ─────────────── */
+const SCORES_KEY = "hh_scores_v1";
+let boardIsLocal = false;
+
+function localScores(){
+  try{ const a = JSON.parse(localStorage.getItem(SCORES_KEY)); return Array.isArray(a) ? a : []; }
+  catch(e){ return []; }
+}
+function saveLocalScores(arr){
+  try{ localStorage.setItem(SCORES_KEY, JSON.stringify(arr.slice(0, 100))); }catch(e){}
+}
+
+async function fetchScores(){
+  try{
+    const r = await fetch("/api/scores", { cache: "no-store" });
+    if(!r.ok) throw 0;
+    const d = await r.json();
+    if(!d || !Array.isArray(d.scores)) throw 0;
+    boardIsLocal = false;
+    return d.scores;
+  }catch(e){
+    boardIsLocal = true;
+    return localScores().slice(0, 50);
+  }
+}
+
+async function submitScore(entry){
+  try{
+    const r = await fetch("/api/scores", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(entry),
+    });
+    if(!r.ok) throw 0;
+    const d = await r.json();
+    if(!d || !d.ok) throw 0;
+    boardIsLocal = false;
+    return { rank: d.rank, scores: d.scores };
+  }catch(e){
+    boardIsLocal = true;
+    const arr = localScores();
+    const rec = { name: entry.name, score: entry.score, character: entry.character, ts: Date.now() };
+    arr.push(rec);
+    arr.sort((a, b) => b.score - a.score || a.ts - b.ts);
+    const trimmed = arr.slice(0, 100);
+    saveLocalScores(trimmed);
+    const rank = trimmed.indexOf(rec) + 1;
+    return { rank: rank || null, scores: trimmed.slice(0, 50) };
+  }
+}
+
+async function renderBoardInto(mount, highlight){
+  if(!mount) return;
+  mount.innerHTML = `<p class="board-note">불러오는 중... ⏳</p>`;
+  const scores = await fetchScores();
+  mount.innerHTML = boardMarkup(scores, highlight);
+}
+
+function boardMarkup(scores, highlight){
+  const note = boardIsLocal
+    ? "⚠️ 지금은 이 기기에만 저장돼요 (랭킹 서버 미연결)"
+    : "전 세계 친구들과 함께하는 누적 랭킹 ✨";
+  if(!scores.length){
+    return `<p class="board-note">${note}</p><div class="board-empty">아직 기록이 없어요. 1등이 되어보세요! 🥇</div>`;
+  }
+  let hlDone = false;
+  const rows = scores.map((e, i) => {
+    const rank = i + 1;
+    let me = "";
+    if(highlight && !hlDone && e.name === highlight.name && Number(e.score) === Number(highlight.score)){
+      me = " me"; hlDone = true;
+    }
+    const medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : rank;
+    const rcls = rank <= 3 ? " r" + rank : "";
+    const char = e.character ? `<span class="board-char">${esc(e.character)}</span>` : "";
+    return `<li class="${me.trim()}">
+      <span class="board-rank${rcls}">${medal}</span>
+      <span class="board-name">${esc(e.name)}</span>
+      ${char}
+      <span class="board-score">${Number(e.score) || 0}</span>
+    </li>`;
+  }).join("");
+  return `<p class="board-title">TOP ${scores.length}</p><p class="board-note">${note}</p><ul class="board-list">${rows}</ul>`;
+}
+
 renderIntro();
 </script>
 </body>

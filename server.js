@@ -146,6 +146,52 @@ app.post("/api/recommend", (req, res) => {
   res.json({ top, runners });
 });
 
+// ── 🏆 누적 랭킹(로컬 미리보기용) ─────────────────────────
+// 운영(Cloudflare)에서는 functions/api/scores.js + KV 가 처리합니다.
+// 로컬에서는 scores.local.json 파일에 저장해 동일한 API로 동작시킵니다.
+const SCORES_FILE = path.join(__dirname, "scores.local.json");
+const MAX_ENTRIES = 100;
+
+function readLocalScores() {
+  try {
+    const arr = JSON.parse(fs.readFileSync(SCORES_FILE, "utf-8"));
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+function cleanName(raw) {
+  let s = (typeof raw === "string" ? raw : "").replace(/[\x00-\x1f\x7f]/g, "");
+  s = s.replace(/\s+/g, " ").trim();
+  if (s.length > 12) s = s.slice(0, 12);
+  return s || "익명";
+}
+
+app.get("/api/scores", (req, res) => {
+  res.json({ ok: true, scores: readLocalScores().slice(0, 50) });
+});
+
+app.post("/api/scores", (req, res) => {
+  const b = req.body || {};
+  const n = Math.floor(Number(b.score));
+  if (!Number.isFinite(n) || n < 0) {
+    return res.status(400).json({ ok: false, error: "점수가 올바르지 않아요." });
+  }
+  const entry = {
+    name: cleanName(b.name),
+    score: Math.min(n, 100000),
+    character: cleanName(b.character).slice(0, 20),
+    ts: Date.now(),
+  };
+  const board = readLocalScores();
+  board.push(entry);
+  board.sort((a, b2) => b2.score - a.score || a.ts - b2.ts);
+  const trimmed = board.slice(0, MAX_ENTRIES);
+  fs.writeFileSync(SCORES_FILE, JSON.stringify(trimmed));
+  const rank = trimmed.indexOf(entry) + 1;
+  res.json({ ok: true, rank: rank || null, scores: trimmed.slice(0, 50) });
+});
+
 app.listen(PORT, () => {
   console.log(`🎀 캐릭터 찾기 서버 실행 중 → http://localhost:${PORT}`);
 });

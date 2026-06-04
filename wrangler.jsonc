@@ -1,8 +1,20 @@
 {
-  // Cloudflare Workers (Static Assets) 설정 — public/ 폴더를 정적 사이트로 배포
+  // Cloudflare Worker(정적 자산 + 랭킹 API) 설정 — git push 시 `wrangler deploy`로 자동 배포
   "name": "hh",
+  "main": "worker.js",
   "compatibility_date": "2025-06-01",
+
+  // public/ 폴더를 정적 자산으로 서빙. worker.js 에서 env.ASSETS 로 접근.
   "assets": {
-    "directory": "./public"
-  }
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+
+  // 🏆 누적 랭킹 저장용 KV 네임스페이스.
+  //   worker.js 에서 env.LEADERBOARD 로 접근합니다.
+  //   ▸ 대시보드에서 KV 네임스페이스를 만든 뒤, 그 "Namespace ID"를 아래 id 에 붙여넣으세요.
+  //     (Storage & Databases → KV → 만든 네임스페이스의 ID 복사)
+  "kv_namespaces": [
+    { "binding": "LEADERBOARD", "id": "31baac3a27914808997d4d0ed5e7d8b2" }
+  ]
 }
