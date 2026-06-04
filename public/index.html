@@ -790,7 +790,7 @@ function loop(t){
   GAME.elapsed += dt;
   GAME.speed = 250 + Math.min(GAME.elapsed, DUR) / DUR * 175;
   update(dt);
-  render();
+  gameRender();
   updateHud();
 
   if(GAME.elapsed >= DUR){ endRun(true); return; }
@@ -827,7 +827,7 @@ function update(dt){
        pb.y < o.y + o.h && pb.y + pb.h > o.y){
       g.hearts--; g.inv = 1.0; p.vy = -340;
       g.pops.push({ x: p.x + p.size / 2, y: p.y, life: 0.7, text: "-❤️", color: "#e74c6f" });
-      if(g.hearts <= 0){ render(); endRun(false); return; }
+      if(g.hearts <= 0){ gameRender(); endRun(false); return; }
     }
   }
   g.obstacles = g.obstacles.filter(o => o.x + o.w > -10);
@@ -851,6 +851,7 @@ function update(dt){
 
 // ── 렌더 ────────────────────────────────────────────────────
 function roundRect(ctx, x, y, w, h, r){
+  // (게임 캔버스 렌더 헬퍼)
   ctx.beginPath();
   ctx.moveTo(x + r, y);
   ctx.arcTo(x + w, y, x + w, y + h, r);
@@ -860,7 +861,7 @@ function roundRect(ctx, x, y, w, h, r){
   ctx.closePath();
 }
 
-function render(){
+function gameRender(){
   const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME;
   // 하늘
   const sky = ctx.createLinearGradient(0, 0, 0, H);
