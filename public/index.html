@@ -129,6 +129,20 @@
     display: inline-flex; align-items: center; gap: 6px; line-height: 1.15;
   }
   .btn-adventure:active { transform: translateY(4px); box-shadow: 0 0 0 #e07b1e; }
+
+  /* 클릭 유도 디자인 */
+  .adventure-row {
+    display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
+    animation: advattract 1.3s ease-in-out infinite;
+  }
+  @keyframes advattract { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+  .adventure-row .btn-adventure { animation: none; }
+  .click-hint {
+    font-family: 'Jua', sans-serif; color: #ff5fa2; font-size: 1.02rem; font-weight: bold;
+    cursor: pointer; white-space: nowrap; text-shadow: 0 1px 0 #fff;
+    animation: clickwiggle .8s ease-in-out infinite;
+  }
+  @keyframes clickwiggle { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-7px); } }
   .btn-leaderboard-open {
     margin-top: 10px; border: none; cursor: pointer; font-family: 'Jua', sans-serif;
     background: #fff; color: #c07; font-size: 1rem; padding: 10px 20px;
@@ -549,7 +563,10 @@ async function showEevee(){
     document.getElementById("app").innerHTML = `
       <img class="result-img" src="${top.image}" alt="${top.name}"
            onerror="this.replaceWith(Object.assign(document.createElement('div'),{textContent:'${top.emoji||"🦊"}',style:'font-size:6rem'}))">
-      <div><button class="btn-adventure" onclick="startAdventure()">🏃 공주를 구하러 가볼까요?</button></div>
+      <div class="adventure-row">
+        <button class="btn-adventure" onclick="startAdventure()">🏃 공주를 구하러 가볼까요?</button>
+        <span class="click-hint" onclick="startAdventure()">👈 클릭!</span>
+      </div>
       <div class="result-sub">🥚 비밀의 알에서 태어난 친구!</div>
       <div class="result-name">${top.name}</div>
       <div class="result-tags">${top.keywords.map(k=>`<span class="tag">#${k}</span>`).join("")}</div>
@@ -611,7 +628,10 @@ async function showResult(){
     document.getElementById("app").innerHTML = `
       <img class="result-img" src="${top.image}" alt="${top.name}"
            onerror="this.replaceWith(Object.assign(document.createElement('div'),{textContent:'${top.emoji||"⭐"}',style:'font-size:6rem'}))">
-      <div><button class="btn-adventure" onclick="startAdventure()">🏃 공주를 구하러 가볼까요?</button></div>
+      <div class="adventure-row">
+        <button class="btn-adventure" onclick="startAdventure()">🏃 공주를 구하러 가볼까요?</button>
+        <span class="click-hint" onclick="startAdventure()">👈 클릭!</span>
+      </div>
       <div class="result-sub">너에게 딱 맞는 친구는...</div>
       <div class="result-name">${top.name}</div>
       <div class="result-tags">${top.keywords.map(k=>`<span class="tag">#${k}</span>`).join("")}</div>
