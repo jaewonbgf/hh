@@ -114,12 +114,12 @@
 
   /* 🏃 모험 버튼 (결과 화면) */
   .btn-adventure {
-    margin-top: 14px; border: none; cursor: pointer; font-family: 'Jua', sans-serif;
-    background: linear-gradient(#ffd36b, #ff9f43); color: #7a4a00; font-size: 1.2rem;
-    padding: 15px 26px; border-radius: 999px; box-shadow: 0 6px 0 #e07b1e;
-    display: inline-flex; align-items: center; gap: 8px; line-height: 1.2;
+    margin: 8px 0 4px; border: none; cursor: pointer; font-family: 'Jua', sans-serif;
+    background: linear-gradient(#ffd36b, #ff9f43); color: #7a4a00; font-size: .98rem;
+    padding: 8px 16px; border-radius: 999px; box-shadow: 0 4px 0 #e07b1e;
+    display: inline-flex; align-items: center; gap: 6px; line-height: 1.15;
   }
-  .btn-adventure:active { transform: translateY(6px); box-shadow: 0 0 0 #e07b1e; }
+  .btn-adventure:active { transform: translateY(4px); box-shadow: 0 0 0 #e07b1e; }
   .btn-leaderboard-open {
     margin-top: 10px; border: none; cursor: pointer; font-family: 'Jua', sans-serif;
     background: #fff; color: #c07; font-size: 1rem; padding: 10px 20px;
@@ -626,8 +626,8 @@ const GAME = {
   groundY:0, speed:0,
   phase:"play",            // "play" | "rescue"(컷신)
   rescueT:0, sparks:[],
-  player:null, obstacles:[], coins:[], boosts:[], pops:[],
-  spawnObs:0, spawnCoin:0, bigSchedule:[], heartSchedule:[],
+  player:null, obstacles:[], coins:[], boosts:[], pits:[], pops:[],
+  spawnObs:0, spawnCoin:0, spawnPit:0, bigSchedule:[], heartSchedule:[], bigObsSchedule:[],
   coinCount:0, score:0, hearts:2, inv:0,
   heroUrl:"", heroEmoji:"⭐", heroImg:null, heroReady:false,
   princessImg:null, princessReady:false,
@@ -642,6 +642,7 @@ const START_HEARTS = 2;  // 시작 하트
 const RESCUE_DUR = 3.6;  // 공주 구출 컷신 길이(초)
 const BIG_COIN_TIMES = [10, 18]; // 큰 코인(10코인)이 등장하는 시각
 const HEART_TIMES = [10, 20];    // 보너스 하트가 등장하는 시각
+const BIG_OBS_TIMES = [6, 12, 17, 22, 27]; // 큰 선인장(2단 점프로만 회피) 5개 등장 시각
 
 function $g(id){ return document.getElementById(id); }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c =>
@@ -718,7 +719,8 @@ function showReadyScreen(){
       아래 <b>점프 버튼</b>(또는 <b>스페이스바</b>)을 누르면 <b>점프</b> 🦘 (두 번 누르면 더블점프!)<br>
       🪙 작은 코인 = <b>1코인</b>, 🟡 큰 코인 = <b>10코인</b>(더블점프로!)<br>
       ❤️ 하트 <b>${START_HEARTS}개</b>로 시작! 10초·20초에 <b>보너스 하트</b>를 먹어요.<br>
-      🌵 장애물을 피하고 ${DUR}초를 버티면 <b>왕이 공주를 구출!</b> 👑
+      🕳️ <b>구멍</b>은 뛰어넘고, 🌵 <b>큰 선인장</b>은 <b>2단 점프</b>로 넘어요!<br>
+      ${DUR}초를 버티면 <b>왕이 공주를 구출!</b> 👑
     </div>
     <div class="gs-row">
       <button class="gs-btn go" onclick="beginRun()">▶ 출발!</button>
@@ -753,10 +755,11 @@ function beginRun(){
     x: Math.max(54, Math.round(GAME.W * 0.16)),
     size, y: GAME.groundY - size, vy: 0, jumps: 0, onGround: true,
   };
-  GAME.obstacles = []; GAME.coins = []; GAME.boosts = []; GAME.pops = []; GAME.sparks = [];
-  GAME.spawnObs = 0.8; GAME.spawnCoin = 0.5;
+  GAME.obstacles = []; GAME.coins = []; GAME.boosts = []; GAME.pits = []; GAME.pops = []; GAME.sparks = [];
+  GAME.spawnObs = 0.8; GAME.spawnCoin = 0.5; GAME.spawnPit = 3.0;
   GAME.bigSchedule = BIG_COIN_TIMES.map(at => ({ at, done: false }));
   GAME.heartSchedule = HEART_TIMES.map(at => ({ at, done: false }));
+  GAME.bigObsSchedule = BIG_OBS_TIMES.map(at => ({ at, done: false }));
   GAME.coinCount = 0; GAME.score = 0; GAME.hearts = START_HEARTS; GAME.inv = 0;
   GAME.elapsed = 0; GAME.speed = 250; GAME.submitted = false;
   GAME.phase = "play"; GAME.rescueT = 0;
@@ -839,6 +842,18 @@ function spawnHeart(){
   GAME.boosts.push({ x: GAME.W + 40, y, r: 17, taken: false });
   GAME.pops.push({ x: GAME.W - 64, y: 60, life: 1.4, text: "❤️ 보너스 하트!", color: "#e74c6f" });
 }
+function spawnPit(){
+  // 바닥 구멍: 점프로 건너뛰어야 함
+  const w = 66 + Math.floor(Math.random() * 40);
+  GAME.pits.push({ x: GAME.W + 40, w });
+}
+function spawnBigObstacle(){
+  // 큰 선인장: 2단 점프로만 넘을 수 있는 높이(150~180)
+  const h = 150 + Math.floor(Math.random() * 30);
+  const w = 30 + Math.floor(Math.random() * 10);
+  GAME.obstacles.push({ x: GAME.W + 40, w, h, y: GAME.groundY - h, big: true });
+  GAME.pops.push({ x: GAME.W - 70, y: 78, life: 1.4, text: "⚠️ 큰 선인장! 2단 점프!", color: "#2e9248" });
+}
 
 // ── 메인 루프 ───────────────────────────────────────────────
 function loop(t){
@@ -874,8 +889,17 @@ function update(dt){
   p.vy += GRAVITY * dt;
   p.y += p.vy * dt;
   const floorTop = g.groundY - p.size;
-  if(p.y >= floorTop){ p.y = floorTop; p.vy = 0; p.jumps = 0; p.onGround = true; }
+  const pCenterX = p.x + p.size / 2;
+  // 무적 중이 아니고 구멍 위라면 바닥이 없음(빠짐)
+  const overPit = g.inv <= 0 && g.pits.some(pt => pCenterX > pt.x + 4 && pCenterX < pt.x + pt.w - 4);
+  if(!overPit && p.y >= floorTop){ p.y = floorTop; p.vy = 0; p.jumps = 0; p.onGround = true; }
   else p.onGround = false;
+  // 구멍에 빠짐 → 하트 감소 후 복귀
+  if(p.y > g.groundY + 26){
+    g.hearts--; g.inv = 1.2; p.y = floorTop; p.vy = -360; p.jumps = 0; p.onGround = false;
+    g.pops.push({ x: pCenterX, y: floorTop, life: 0.9, text: "구멍! -❤️", color: "#e74c6f" });
+    if(g.hearts <= 0){ gameRender(); endRun(false); return; }
+  }
   if(g.inv > 0) g.inv -= dt;
 
   // 스폰 타이머
@@ -894,6 +918,15 @@ function update(dt){
   for(const b of g.heartSchedule){
     if(!b.done && g.elapsed >= b.at){ b.done = true; spawnHeart(); }
   }
+  // 큰 선인장: 정해진 시각에 5개(2단 점프로만 회피)
+  for(const b of g.bigObsSchedule){
+    if(!b.done && g.elapsed >= b.at){ b.done = true; spawnBigObstacle(); }
+  }
+  // 바닥 구멍: 일정 간격으로 등장
+  g.spawnPit -= dt;
+  if(g.spawnPit <= 0){ spawnPit(); g.spawnPit = 2.8 + Math.random() * 2.0; }
+  for(const pt of g.pits) pt.x -= g.speed * dt;
+  g.pits = g.pits.filter(pt => pt.x + pt.w > -10);
 
   // 이동 + 충돌
   const pad = p.size * 0.16;
@@ -1017,6 +1050,18 @@ function drawGround(ctx, W, H, gY, stripePhase){
   for(let x = -stripe; x < W; x += 46) ctx.fillRect(x, gY + 16, 22, 5);
 }
 
+// 바닥 구멍(낭떠러지) 그리기 — drawGround 다음에 호출해 땅을 파냄
+function drawPits(ctx, pits, gY, H){
+  for(const p of pits){
+    const grd = ctx.createLinearGradient(0, gY, 0, H);
+    grd.addColorStop(0, "#4a3a28"); grd.addColorStop(1, "#241a12");
+    ctx.fillStyle = grd; ctx.fillRect(p.x, gY, p.w, H - gY);
+    // 양옆 흙벽 + 풀 가장자리
+    ctx.fillStyle = "#6b4f2e"; ctx.fillRect(p.x - 4, gY, 4, H - gY); ctx.fillRect(p.x + p.w, gY, 4, H - gY);
+    ctx.fillStyle = "#5a8f4f"; ctx.fillRect(p.x - 4, gY, 4, 7); ctx.fillRect(p.x + p.w, gY, 4, 7);
+  }
+}
+
 function drawHero(ctx, x, py, size){
   ctx.save();
   roundRect(ctx, x, py, size, size, 14); ctx.clip();
@@ -1120,22 +1165,24 @@ function gameRender(){
   drawClouds(ctx, W, g.elapsed);
   drawCastle(ctx, W, gY, g.elapsed * 60);
   drawGround(ctx, W, H, gY, g.elapsed * g.speed);
+  drawPits(ctx, g.pits, gY, H);
 
   // 코인(작은 1코인 / 큰 10코인)
   for(const c of g.coins){ if(!c.taken) drawCoin(ctx, c); }
   // 보너스 하트
   for(const bz of g.boosts){ if(!bz.taken) drawHeartIcon(ctx, bz.x, bz.y, bz.r); }
 
-  // 장애물 (선인장풍)
+  // 장애물 (선인장풍) — big은 더 크고 진한 색
   for(const o of g.obstacles){
-    ctx.fillStyle = "#3fae5a";
+    ctx.fillStyle = o.big ? "#2e9248" : "#3fae5a";
     roundRect(ctx, o.x, o.y, o.w, o.h, Math.min(8, o.w / 2)); ctx.fill();
     if(o.h > 40){
+      const armLen = Math.min(o.big ? 26 : 18, o.h * 0.3);
       const ay = o.y + o.h * 0.4;
-      roundRect(ctx, o.x - 7, ay, 7, Math.min(18, o.h * 0.3), 4); ctx.fill();
-      roundRect(ctx, o.x + o.w, ay + 6, 7, Math.min(18, o.h * 0.3), 4); ctx.fill();
+      roundRect(ctx, o.x - 7, ay, 7, armLen, 4); ctx.fill();
+      roundRect(ctx, o.x + o.w, ay + 6, 7, armLen, 4); ctx.fill();
     }
-    ctx.fillStyle = "#2f9249"; ctx.fillRect(o.x + o.w * 0.3, o.y + 6, 3, o.h - 12);
+    ctx.fillStyle = o.big ? "#236e37" : "#2f9249"; ctx.fillRect(o.x + o.w * 0.3, o.y + 6, 3, o.h - 12);
   }
 
   // 납치된 공주(해나) — 우측 상단
@@ -1160,7 +1207,7 @@ function gameRender(){
 // ── 🏰 공주 구출 컷신(20초 후) ─────────────────────────────
 function startRescue(){
   GAME.phase = "rescue"; GAME.rescueT = 0; GAME.sparks = []; GAME.pops = [];
-  GAME.obstacles = []; GAME.coins = []; GAME.boosts = [];
+  GAME.obstacles = []; GAME.coins = []; GAME.boosts = []; GAME.pits = [];
   setHud(false); showJumpBtn(false);
   GAME.player.vy = 0;
   GAME.rescue = {
