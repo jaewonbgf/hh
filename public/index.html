@@ -661,8 +661,9 @@ const DUR = 30;          // 게임 길이(초)
 const GRAVITY = 2300;
 const JUMP_V = -780;
 const MAX_JUMPS = 2;
-const MAX_HEARTS = 7;    // 하트 최대치
-const START_HEARTS = 5;  // 시작 하트
+const MAX_HEARTS = 10;   // 하트 최대치
+const START_HEARTS = 7;  // 시작 하트
+const HEART_BONUS = 20;  // 남은 하트 1개당 보너스 점수
 const RESCUE_DUR = 3.6;  // 공주 구출 컷신 길이(초)
 const DRAGON_HP = 5;     // 용을 쓰러뜨리는 데 필요한 장풍 명중 수
 const ATK_CD = 0.45;     // 장풍 발사 쿨다운(초)
@@ -1511,7 +1512,8 @@ function endRun(success){
   stopLoop();
   showJumpBtn(false);
   let bonus = 0;
-  if(success){ bonus = 30 + GAME.hearts * 10; GAME.score += bonus; }
+  const heartBonus = success ? GAME.hearts * HEART_BONUS : 0;  // 남은 하트당 20점
+  if(success){ bonus = 30 + heartBonus; GAME.score += bonus; }
   updateHud();
   const lastName = (function(){ try{ return localStorage.getItem("hh_name") || ""; }catch(e){ return ""; } })();
   setHud(false);
@@ -1538,7 +1540,7 @@ function endRun(success){
     ${ending}
     ${success ? "" : heroImgTag("gs-hero")}
     <div class="gs-score">⭐ ${GAME.score}점</div>
-    <p class="gs-sub">🪙 코인 ${GAME.coinCount}개 ${success ? "· 완주 보너스 +" + bonus + " 🏅" : "· 다음엔 더 멀리!"}</p>
+    <p class="gs-sub">🪙 코인 ${GAME.coinCount}개 ${success ? "· 완주 보너스 +" + bonus + " (남은 ❤️" + GAME.hearts + "×" + HEART_BONUS + ") 🏅" : "· 다음엔 더 멀리!"}</p>
     <div class="gs-row">
       <input id="nameInput" class="name-input" maxlength="12" placeholder="이름을 적어줘 ✏️" value="${esc(lastName)}">
     </div>
