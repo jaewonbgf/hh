@@ -132,7 +132,7 @@
     position: fixed; inset: 0; z-index: 200;
     background: linear-gradient(160deg, #bfe3ff 0%, #e7f4ff 55%, #fff3d6 100%);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 10px;
+    padding: 10px; overflow-y: auto;
   }
   .game-stage {
     position: relative; width: 100%; max-width: 720px;
@@ -154,12 +154,12 @@
   }
   .game-hud .hud-time { color: #e0568a; font-weight: bold; }
 
-  /* 게임 안내/종료 화면 (캔버스 위 오버레이) */
+  /* 게임 안내/종료 화면 — 캔버스에 갇히지 않고 화면 전체를 사용(내용 길면 위에서부터 스크롤) */
   .game-screen {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 12px; text-align: center;
-    background: rgba(255,255,255,.82); backdrop-filter: blur(2px);
-    padding: 22px 18px; overflow-y: auto;
+    position: fixed; inset: 0; z-index: 210; display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start; gap: 12px; text-align: center;
+    background: rgba(255,255,255,.94); backdrop-filter: blur(2px);
+    padding: 24px 16px calc(28px + env(safe-area-inset-bottom)); overflow-y: auto;
     font-family: 'Jua', sans-serif; color: #5a4a66;
   }
   .game-screen.hidden { display: none; }
@@ -700,7 +700,9 @@ function showReadyScreen(){
 function sizeCanvas(){
   const stage = GAME.canvas.parentElement;
   const cssW = stage.clientWidth || 360;
-  const cssH = Math.max(240, Math.min(430, Math.round(cssW * 0.62)));
+  const vh = window.innerHeight || 600;
+  // 화면 세로의 약 72%까지 키우되 280~600px 범위로 제한
+  const cssH = Math.max(280, Math.min(600, Math.round(vh * 0.72), Math.round(cssW * 0.75)));
   GAME.dpr = window.devicePixelRatio || 1;
   GAME.canvas.style.height = cssH + "px";
   GAME.canvas.width = Math.round(cssW * GAME.dpr);
