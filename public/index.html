@@ -154,16 +154,21 @@
   }
   .game-hud .hud-time { color: #e0568a; font-weight: bold; }
 
-  /* ⬆ 점프 버튼 (게임 화면 아래, 캔버스를 가리지 않음) */
-  .jump-btn {
-    flex: none; margin-top: 10px; width: 220px; max-width: 84vw; height: 52px;
-    border-radius: 16px; border: none; cursor: pointer;
-    background: linear-gradient(#ffd76b, #ff9f2e); color: #7a3d00;
-    box-shadow: 0 5px 0 #d97a12; font-family: 'Jua', sans-serif; font-size: 1.25rem;
+  /* ⬆🔥 조작 버튼 (게임 화면 아래, 캔버스를 가리지 않음) */
+  .game-controls {
+    display: flex; gap: 12px; align-items: center; justify-content: center;
+    margin-top: 10px; width: 100%; max-width: 520px;
+  }
+  .jump-btn, .atk-btn {
+    flex: 1 1 0; max-width: 240px; height: 54px; border-radius: 16px; border: none; cursor: pointer;
+    font-family: 'Jua', sans-serif; font-size: 1.25rem;
     display: flex; align-items: center; justify-content: center; gap: 6px;
     touch-action: none; user-select: none;
   }
+  .jump-btn { background: linear-gradient(#ffd76b, #ff9f2e); color: #7a3d00; box-shadow: 0 5px 0 #d97a12; }
   .jump-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #d97a12; }
+  .atk-btn { background: linear-gradient(#7ec8ff, #3aa0ff); color: #063a66; box-shadow: 0 5px 0 #1f7fd6; }
+  .atk-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #1f7fd6; }
 
   /* 게임 안내/종료 화면 — 캔버스에 갇히지 않고 화면 전체를 사용(내용 길면 위에서부터 스크롤) */
   .game-screen {
@@ -267,7 +272,10 @@
       </div>
       <div class="game-screen" id="gameScreen"></div>
     </div>
-    <button class="jump-btn" id="jumpBtn" style="display:none">⬆ 점프</button>
+    <div class="game-controls" id="gameControls" style="display:none">
+      <button class="jump-btn" id="jumpBtn">⬆ 점프</button>
+      <button class="atk-btn" id="attackBtn" style="display:none">🔥 공격</button>
+    </div>
   </div>
 
 <script>
@@ -624,8 +632,8 @@ const GAME = {
   canvas:null, ctx:null, W:0, H:0, dpr:1,
   raf:0, running:false, last:0, elapsed:0,
   groundY:0, speed:0,
-  phase:"play",            // "play" | "rescue"(컷신)
-  rescueT:0, sparks:[],
+  phase:"play",            // "play" | "boss"(용 보스전) | "rescue"(컷신)
+  rescueT:0, sparks:[], boss:null,
   player:null, obstacles:[], coins:[], boosts:[], pits:[], pops:[],
   spawnObs:0, spawnCoin:0, spawnPit:0, bigSchedule:[], heartSchedule:[], bigObsSchedule:[],
   coinCount:0, score:0, hearts:2, inv:0,
@@ -640,6 +648,8 @@ const MAX_JUMPS = 2;
 const MAX_HEARTS = 5;    // 하트 최대치
 const START_HEARTS = 2;  // 시작 하트
 const RESCUE_DUR = 3.6;  // 공주 구출 컷신 길이(초)
+const DRAGON_HP = 5;     // 용을 쓰러뜨리는 데 필요한 장풍 명중 수
+const ATK_CD = 0.45;     // 장풍 발사 쿨다운(초)
 const BIG_COIN_TIMES = [10, 18]; // 큰 코인(10코인)이 등장하는 시각
 const HEART_TIMES = [10, 20];    // 보너스 하트가 등장하는 시각
 const BIG_OBS_TIMES = [6, 12, 17, 22, 27]; // 큰 선인장(2단 점프로만 회피) 5개 등장 시각
@@ -720,7 +730,7 @@ function showReadyScreen(){
       🪙 작은 코인 = <b>1코인</b>, 🟡 큰 코인 = <b>10코인</b>(더블점프로!)<br>
       ❤️ 하트 <b>${START_HEARTS}개</b>로 시작! 10초·20초에 <b>보너스 하트</b>를 먹어요.<br>
       🕳️ <b>구멍</b>은 뛰어넘고, 🌵 <b>큰 선인장</b>은 <b>2단 점프</b>로 넘어요!<br>
-      ${DUR}초를 버티면 <b>왕이 공주를 구출!</b> 👑
+      ${DUR}초 버티면 <b>🐉 용 등장!</b> 🔥<b>공격</b>으로 장풍 <b>${DRAGON_HP}번</b> 명중→용을 무찌르고 공주 구출! (용의 불은 점프로 회피)
     </div>
     <div class="gs-row">
       <button class="gs-btn go" onclick="beginRun()">▶ 출발!</button>
@@ -781,15 +791,31 @@ function stopLoop(){
   bindInput(false);
 }
 
-// ── 입력(점프 / 컷신 스킵) ─────────────────────────────────
+// ── 입력(점프 / 공격 / 컷신 스킵) ──────────────────────────
 function showJumpBtn(on){
-  const b = $g("jumpBtn");
+  const b = $g("gameControls");
+  if(b) b.style.display = on ? "flex" : "none";
+  if(!on) showAttackBtn(false);
+}
+function showAttackBtn(on){
+  const b = $g("attackBtn");
   if(b) b.style.display = on ? "flex" : "none";
 }
 function doJump(){
   const p = GAME.player;
-  if(!p || !GAME.running || GAME.phase !== "play") return;
+  if(!p || !GAME.running) return;
+  if(GAME.phase !== "play" && GAME.phase !== "boss") return;  // 점프는 플레이/보스전에서
   if(p.jumps < MAX_JUMPS){ p.vy = JUMP_V; p.jumps++; p.onGround = false; }
+}
+function doAttack(){
+  const g = GAME, b = g.boss;
+  if(!g.running || g.phase !== "boss" || !b || b.defeated || b.atkCD > 0) return;
+  b.atkCD = ATK_CD;
+  const p = g.player, dr = b.dragon;
+  // 용을 향해 장풍을 조준 발사
+  const sx = p.x + p.size, sy = p.y + p.size * 0.45;
+  const dx = dr.x - sx, dy = dr.y - sy, d = Math.max(1, Math.hypot(dx, dy)), sp = 640;
+  b.shots.push({ x: sx, y: sy, vx: dx / d * sp, vy: dy / d * sp, r: 14 });
 }
 function skipRescue(){
   if(GAME.running && GAME.phase === "rescue" && GAME.rescueT > 0.6) goToScore();
@@ -798,19 +824,24 @@ function onKey(e){
   if(e.code === "Space" || e.code === "ArrowUp" || e.key === " "){
     e.preventDefault();
     if(GAME.phase === "rescue") skipRescue(); else doJump();
+  } else if(e.code === "KeyA" || e.code === "KeyX" || e.key === "a" || e.key === "x"){
+    e.preventDefault(); doAttack();
   }
 }
 function onJumpBtn(e){ e.preventDefault(); e.stopPropagation(); doJump(); }
+function onAtkBtn(e){ e.preventDefault(); e.stopPropagation(); doAttack(); }
 function onCanvasTap(e){ if(GAME.phase === "rescue"){ e.preventDefault(); skipRescue(); } }
 function bindInput(on){
-  const c = GAME.canvas, b = $g("jumpBtn");
+  const c = GAME.canvas, b = $g("jumpBtn"), a = $g("attackBtn");
   if(on){
     window.addEventListener("keydown", onKey);
     if(b) b.addEventListener("pointerdown", onJumpBtn);
+    if(a) a.addEventListener("pointerdown", onAtkBtn);
     if(c) c.addEventListener("pointerdown", onCanvasTap);
   } else {
     window.removeEventListener("keydown", onKey);
     if(b) b.removeEventListener("pointerdown", onJumpBtn);
+    if(a) a.removeEventListener("pointerdown", onAtkBtn);
     if(c) c.removeEventListener("pointerdown", onCanvasTap);
   }
 }
@@ -863,6 +894,13 @@ function loop(t){
   GAME.last = t;
   if(dt > 0.05) dt = 0.05;        // 탭 전환 후 점프 방지
 
+  if(GAME.phase === "boss"){
+    updateBoss(dt);
+    if(!GAME.running) return;     // 보스전 사망 시 endRun 에서 처리됨
+    renderBoss();
+    GAME.raf = requestAnimationFrame(loop);
+    return;
+  }
   if(GAME.phase === "rescue"){
     GAME.rescueT += dt;
     updateRescue(dt);
@@ -879,7 +917,7 @@ function loop(t){
   gameRender();
   updateHud();
 
-  if(GAME.elapsed >= DUR){ startRescue(); }
+  if(GAME.elapsed >= DUR){ startBoss(); }   // 30초 → 용 보스전
   GAME.raf = requestAnimationFrame(loop);
 }
 
@@ -1204,7 +1242,134 @@ function gameRender(){
   drawPops(ctx, g);
 }
 
-// ── 🏰 공주 구출 컷신(20초 후) ─────────────────────────────
+// ── 🐉 용 보스전(30초 후) ──────────────────────────────────
+function drawDragon(ctx, dr, t){
+  const size = 88, dy = Math.sin(t * 3) * 8, x = dr.x, y = dr.y + dy;
+  if(dr.flash > 0){ ctx.fillStyle = "rgba(255,80,80,.55)"; ctx.beginPath(); ctx.arc(x, y, size * 0.55, 0, 7); ctx.fill(); }
+  ctx.font = size + "px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText("🐉", x, y);
+  // 용 HP 핍
+  const n = DRAGON_HP, pipW = 17, totW = n * pipW;
+  ctx.font = "14px serif";
+  for(let i = 0; i < n; i++) ctx.fillText(i < dr.hp ? "❤️" : "🖤", x - totW / 2 + pipW / 2 + i * pipW, y - size * 0.58);
+}
+function drawKiBlast(ctx, x, y, r){
+  ctx.save();
+  ctx.fillStyle = "rgba(120,220,255,.5)"; ctx.beginPath(); ctx.arc(x, y, r + 5, 0, 7); ctx.fill();
+  ctx.fillStyle = "#41c7ff"; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+  ctx.fillStyle = "#eafaff"; ctx.beginPath(); ctx.arc(x - r * 0.2, y, r * 0.5, 0, 7); ctx.fill();
+  ctx.restore();
+}
+function drawFireball(ctx, x, y, r){
+  ctx.save();
+  ctx.fillStyle = "rgba(255,140,40,.45)"; ctx.beginPath(); ctx.arc(x, y, r + 5, 0, 7); ctx.fill();
+  ctx.fillStyle = "#ff5b1e"; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+  ctx.fillStyle = "#ffd23f"; ctx.beginPath(); ctx.arc(x + r * 0.2, y, r * 0.55, 0, 7); ctx.fill();
+  ctx.restore();
+}
+
+function startBoss(){
+  const g = GAME;
+  g.phase = "boss";
+  g.obstacles = []; g.coins = []; g.boosts = []; g.pits = []; g.pops = []; g.sparks = [];
+  g.player.x = Math.round(g.W * 0.18);
+  g.player.vy = 0;
+  g.boss = {
+    dragon: { x: Math.round(g.W * 0.76), y: Math.max(72, g.groundY - 130), hp: DRAGON_HP, flash: 0 },
+    shots: [], fires: [], fireTimer: 1.3, atkCD: 0, defeated: false, defeatT: 0, t: 0,
+  };
+  setHud(true); showJumpBtn(true); showAttackBtn(true);
+  g.pops.push({ x: g.W / 2, y: 48, life: 2.8, text: "🐉 용 등장! 🔥공격으로 장풍 " + DRAGON_HP + "번!", color: "#c0392b" });
+}
+
+function updateBoss(dt){
+  const g = GAME, b = g.boss, p = g.player;
+  b.t += dt;
+  // 플레이어 물리(점프로 불 피하기)
+  p.vy += GRAVITY * dt; p.y += p.vy * dt;
+  const floor = g.groundY - p.size;
+  if(p.y >= floor){ p.y = floor; p.vy = 0; p.jumps = 0; p.onGround = true; } else p.onGround = false;
+  if(g.inv > 0) g.inv -= dt;
+  if(b.atkCD > 0) b.atkCD -= dt;
+  if(b.dragon.flash > 0) b.dragon.flash -= dt;
+
+  // 용을 쓰러뜨린 뒤: 잠깐 연출 후 구출 컷신
+  if(b.defeated){
+    b.defeatT += dt;
+    for(const s of g.sparks){ s.vy += 520 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt; }
+    g.sparks = g.sparks.filter(s => s.life > 0);
+    for(const pop of g.pops){ pop.life -= dt; pop.y -= 24 * dt; }
+    g.pops = g.pops.filter(pp => pp.life > 0);
+    if(b.defeatT > 1.2) startRescue();
+    return;
+  }
+
+  // 용 불 발사
+  b.fireTimer -= dt;
+  if(b.fireTimer <= 0){
+    b.fireTimer = 1.3 + Math.random() * 0.9;
+    b.fires.push({ x: b.dragon.x - 24, y: g.groundY - 22, vx: -(360 + Math.random() * 130), r: 15 });
+  }
+
+  // 플레이어 장풍 이동 + 용 명중
+  const dr = b.dragon, dW = 78, dH = 72;
+  for(const s of b.shots){
+    s.x += s.vx * dt; s.y += s.vy * dt;
+    if(!s.hit && s.x > dr.x - dW / 2 && s.x < dr.x + dW / 2 && s.y > dr.y - dH / 2 && s.y < dr.y + dH / 2){
+      s.hit = true; dr.hp--; dr.flash = 0.25; spawnSparks(dr.x, dr.y);
+      g.pops.push({ x: dr.x, y: dr.y - 46, life: 0.8, text: "명중! " + Math.max(0, dr.hp) + " 남음", color: "#2e90d8" });
+      if(dr.hp <= 0){
+        b.defeated = true; b.defeatT = 0; g.sparks = [];
+        spawnSparks(dr.x, dr.y); spawnSparks(dr.x, dr.y);
+        g.pops.push({ x: g.W / 2, y: g.H * 0.32, life: 2, text: "용을 물리쳤다! 🎉", color: "#c0392b" });
+      }
+    }
+  }
+  b.shots = b.shots.filter(s => !s.hit && s.x < g.W + 40 && s.y > -40 && s.y < g.H + 40);
+
+  // 용 불덩이 이동 + 플레이어 피격(점프로 회피)
+  const pad = p.size * 0.18, pb = { x: p.x + pad, y: p.y + pad, w: p.size - pad * 2, h: p.size - pad * 2 };
+  for(const f of b.fires){
+    f.x += f.vx * dt;
+    if(g.inv <= 0 && !f.hit){
+      const nx = Math.max(pb.x, Math.min(f.x, pb.x + pb.w)), ny = Math.max(pb.y, Math.min(f.y, pb.y + pb.h));
+      if((f.x - nx) * (f.x - nx) + (f.y - ny) * (f.y - ny) < f.r * f.r){
+        f.hit = true; g.hearts--; g.inv = 1.2; p.vy = -340;
+        g.pops.push({ x: p.x + p.size / 2, y: p.y, life: 0.8, text: "앗 뜨거! -❤️", color: "#e74c6f" });
+        if(g.hearts <= 0){ renderBoss(); endRun(false); return; }
+      }
+    }
+  }
+  b.fires = b.fires.filter(f => !f.hit && f.x + f.r > -20);
+
+  for(const s of g.sparks){ s.vy += 520 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt; }
+  g.sparks = g.sparks.filter(s => s.life > 0);
+  for(const pop of g.pops){ pop.life -= dt; pop.y -= 24 * dt; }
+  g.pops = g.pops.filter(pp => pp.life > 0);
+  updateHud();
+}
+
+function renderBoss(){
+  const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME, b = GAME.boss;
+  drawSky(ctx, W, H); drawClouds(ctx, W, g.elapsed);
+  drawCastle(ctx, W, gY, g.elapsed * 60); drawGround(ctx, W, H, gY, g.elapsed * g.speed);
+  // 용에게 잡힌 공주(위쪽)
+  drawCagedPrincess(ctx, Math.round(W * 0.9), Math.min(gY - 20, 126), 46, false, b.t);
+  if(!b.defeated) drawDragon(ctx, b.dragon, b.t);
+  for(const s of b.shots) drawKiBlast(ctx, s.x, s.y, s.r);
+  for(const f of b.fires) drawFireball(ctx, f.x, f.y, f.r);
+  const p = g.player;
+  const blink = g.inv > 0 && Math.floor(b.t * 14) % 2 === 0;
+  if(!blink) drawHero(ctx, p.x, p.y, p.size);
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  for(const s of g.sparks){ ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.6)); ctx.font = "20px serif"; ctx.fillText(s.ch, s.x, s.y); ctx.globalAlpha = 1; }
+  drawPops(ctx, g);
+  ctx.fillStyle = "rgba(90,74,102,.85)"; ctx.font = "13px Jua, sans-serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+  ctx.fillText("🔥공격 = 장풍 발사 · 불은 ⬆점프로 피해요!", W / 2, H - 10);
+}
+
+// ── 🏰 공주 구출 컷신(용 처치 후) ───────────────────────────
 function startRescue(){
   GAME.phase = "rescue"; GAME.rescueT = 0; GAME.sparks = []; GAME.pops = [];
   GAME.obstacles = []; GAME.coins = []; GAME.boosts = []; GAME.pits = [];
