@@ -7,7 +7,9 @@
   // public/ 폴더를 정적 자산으로 서빙. worker.js 에서 env.ASSETS 로 접근.
   "assets": {
     "directory": "./public",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // Worker가 모든 요청을 먼저 처리(HTML 응답 헤더를 no-cache로 덮어쓰기 위함)
+    "run_worker_first": true
   },
 
   // 🏆 누적 랭킹 저장용 KV 네임스페이스.
