@@ -99,6 +99,17 @@ export default {
     }
 
     // 그 외 모든 요청은 정적 자산(public/)으로
-    return env.ASSETS.fetch(request);
+    const res = await env.ASSETS.fetch(request);
+
+    // HTML과 데이터(json)는 항상 최신 확인(no-cache)하도록 헤더 덮어쓰기.
+    //   → 모바일/인앱 브라우저가 옛 캐시를 붙잡고 있어도 접속 시 최신인지 재검증.
+    //   (이미지 등 정적 파일은 기존 캐시 그대로 둬서 빠르게 로드)
+    const path = url.pathname;
+    if (path === "/" || path.endsWith(".html") || path.endsWith(".json")) {
+      const fresh = new Response(res.body, res);
+      fresh.headers.set("Cache-Control", "no-cache, must-revalidate");
+      return fresh;
+    }
+    return res;
   },
 };
