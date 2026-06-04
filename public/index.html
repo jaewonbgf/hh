@@ -112,6 +112,15 @@
   .egg:hover { opacity: .9; transform: scale(1.25) rotate(10deg); filter: none; }
   .egg:active { transform: scale(.85); }
 
+  /* ☀️ 두 번째 이스터에그 (결과 화면 왼쪽 아래, 흐릿) → 이해성 특급 모드 */
+  .sun-egg {
+    position: fixed; left: 16px; bottom: 14px; font-size: 1.7rem;
+    opacity: .12; cursor: pointer; user-select: none; z-index: 50;
+    transition: opacity .3s, transform .3s; filter: grayscale(.3);
+  }
+  .sun-egg:hover { opacity: .95; transform: scale(1.3) rotate(25deg); filter: none; }
+  .sun-egg:active { transform: scale(.85); }
+
   /* 🏃 모험 버튼 (결과 화면) */
   .btn-adventure {
     margin: 8px 0 4px; border: none; cursor: pointer; font-family: 'Jua', sans-serif;
@@ -259,6 +268,8 @@
 
   <!-- 보일듯말듯한 비밀의 알 → 이브이 -->
   <div class="egg" id="egg" onclick="showEevee()" title="?">🥚</div>
+  <!-- 결과 화면 왼쪽 아래 햇님 → 이해성 특급 모드 -->
+  <div class="sun-egg" id="sunEgg" onclick="playAsHaesung()" title="?" style="display:none">☀️</div>
 
   <!-- 🎮 모험 게임 오버레이 -->
   <div class="game-overlay" id="gameOverlay" style="display:none">
@@ -491,6 +502,7 @@ function showMascot(){
 function renderIntro() {
   setMascot(5); // 🎀
   toggleEgg(true);
+  toggleSun(false);
   say("안녕! 너는 누구야? 알려줘 💕");
   let html = `<div class="question">너는 누구야? 🌟</div><div class="options">`;
   WHO_OPTIONS.forEach((o,i)=>{
@@ -555,6 +567,7 @@ async function showEevee(){
       <button class="btn-leaderboard-open" onclick="openLeaderboard()">🏆 누적 랭킹 보기</button>
       <br><button class="btn-again" onclick="restart()">🔄 처음으로</button>
     `;
+    toggleSun(true);
   } catch (e) {
     say("앗, 알이 깨지지 않아 😢");
     document.getElementById("app").innerHTML = `<button class="btn-again" onclick="restart()">🔄 다시</button>`;
@@ -565,6 +578,7 @@ function render() {
   const app = document.getElementById("app");
   if (step >= QUESTIONS.length) { showResult(); return; }
   const q = QUESTIONS[step];
+  toggleSun(false);
   showMascot();
   // 첫 질문에서는 누구인지에 맞춰 인사
   say(step === 0 && answers.who ? `${GREET[answers.who]}` : q.talk);
@@ -615,6 +629,7 @@ async function showResult(){
       <button class="btn-leaderboard-open" onclick="openLeaderboard()">🏆 누적 랭킹 보기</button>
       <br><button class="btn-again" onclick="restart()">🔄 다시 찾기</button>
     `;
+    toggleSun(true);
   } catch (e) {
     say("앗, 문제가 생겼어 😢");
     document.getElementById("app").innerHTML = `<p>캐릭터 정보를 불러오지 못했어요.<br>잠시 후 다시 시도해줘!</p>
@@ -639,6 +654,7 @@ const GAME = {
   coinCount:0, score:0, hearts:2, inv:0,
   heroUrl:"", heroEmoji:"⭐", heroImg:null, heroReady:false,
   princessImg:null, princessReady:false,
+  startHearts:0, fireworks:false,
   submitted:false,
 };
 const DUR = 30;          // 게임 길이(초)
@@ -658,9 +674,26 @@ function $g(id){ return document.getElementById(id); }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c =>
   ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
+function toggleSun(show){
+  const s = $g("sunEgg");
+  if(s) s.style.display = show ? "block" : "none";
+}
+
+// ☀️ 이스터에그: 이해성 사진으로 특급 모드(하트 20 + 폭죽)
+function playAsHaesung(){
+  toggleSun(false);
+  lastTop = { name: "이해성", image: "/img/hs.jpg", emoji: "👦",
+    keywords: ["용감한", "멋진", "특급"] };
+  startAdventure({ hearts: 20, fireworks: true });
+}
+
 // ── 진입점: 결과 화면의 모험 버튼 ───────────────────────────
-function startAdventure(){
+function startAdventure(opts){
   if(!lastTop){ return; }
+  opts = opts || {};
+  GAME.startHearts = opts.hearts || START_HEARTS;
+  GAME.fireworks = !!opts.fireworks;
+  toggleSun(false);
   GAME.heroUrl = lastTop.image || "";
   GAME.heroEmoji = lastTop.emoji || "⭐";
   GAME.heroImg = null; GAME.heroReady = false;
@@ -699,6 +732,7 @@ function closeAdventure(){
   GAME.phase = "play";
   $g("gameOverlay").style.display = "none";
   document.body.style.overflow = "";
+  toggleSun(!!document.querySelector(".btn-adventure"));  // 결과 화면이면 햇님 다시 표시
 }
 
 function setHud(show){
@@ -721,14 +755,15 @@ function showReadyScreen(){
   setHud(false);
   const s = $g("gameScreen");
   s.classList.remove("hidden");
+  const sh = GAME.startHearts || START_HEARTS;
   s.innerHTML = `
-    <h2 class="gs-title">공주를 구하러! 🏁</h2>
+    <h2 class="gs-title">${GAME.fireworks ? "🎆 이해성 특급 모드! 🎆" : "공주를 구하러! 🏁"}</h2>
     ${heroImgTag("gs-hero")}
     <p class="gs-sub"><b>${esc(lastTop ? lastTop.name : "친구")}</b>와(과) 함께<br><b>해나 공주</b>를 구하러 ${DUR}초 모험을 떠나요! 👸</p>
     <div class="gs-howto">
       아래 <b>점프 버튼</b>(또는 <b>스페이스바</b>)을 누르면 <b>점프</b> 🦘 (두 번 누르면 더블점프!)<br>
       🪙 작은 코인 = <b>1코인</b>, 🟡 큰 코인 = <b>10코인</b>(더블점프로!)<br>
-      ❤️ 하트 <b>${START_HEARTS}개</b>로 시작! 10초·20초에 <b>보너스 하트</b>를 먹어요.<br>
+      ❤️ 하트 <b>${sh}개</b>로 시작! 10초·20초에 <b>보너스 하트</b>를 먹어요.<br>
       🕳️ <b>구멍</b>은 뛰어넘고, 🌵 <b>큰 선인장</b>은 <b>2단 점프</b>로 넘어요!<br>
       ${DUR}초 버티면 <b>🐉 용 등장!</b> 🔥<b>공격</b>으로 장풍 <b>${DRAGON_HP}번</b> 명중→용을 무찌르고 공주 구출! (용의 불은 점프로 회피)
     </div>
@@ -770,13 +805,14 @@ function beginRun(){
   GAME.bigSchedule = BIG_COIN_TIMES.map(at => ({ at, done: false }));
   GAME.heartSchedule = HEART_TIMES.map(at => ({ at, done: false }));
   GAME.bigObsSchedule = BIG_OBS_TIMES.map(at => ({ at, done: false }));
-  GAME.coinCount = 0; GAME.score = 0; GAME.hearts = START_HEARTS; GAME.inv = 0;
+  GAME.coinCount = 0; GAME.score = 0; GAME.hearts = GAME.startHearts || START_HEARTS; GAME.inv = 0;
   GAME.elapsed = 0; GAME.speed = 250; GAME.submitted = false;
   GAME.phase = "play"; GAME.rescueT = 0;
 
   $g("gameScreen").classList.add("hidden");
   setHud(true); updateHud();
   showJumpBtn(true);
+  if(GAME.fireworks) spawnFireworks();
 
   bindInput(true);
   GAME.running = true;
@@ -1011,6 +1047,7 @@ function update(dt){
   }
   g.boosts = g.boosts.filter(bz => !bz.taken && bz.x + bz.r > -10);
 
+  updateSparks(dt, 220);   // 시작 폭죽 입자
   for(const pop of g.pops){ pop.life -= dt; pop.y -= 26 * dt; }
   g.pops = g.pops.filter(pop => pop.life > 0);
 }
@@ -1197,6 +1234,35 @@ function spawnSparks(x, y){
   }
 }
 
+// 🎆 시작 폭죽(이해성 특급 모드)
+function spawnFireworks(){
+  const chs = ["✨","🎉","🎆","⭐","💖","🌟"];
+  for(let b = 0; b < 5; b++){
+    const cx = GAME.W * (0.18 + Math.random() * 0.64), cy = GAME.H * (0.18 + Math.random() * 0.32);
+    for(let i = 0; i < 16; i++){
+      const a = (i / 16) * Math.PI * 2, sp = 100 + Math.random() * 130;
+      GAME.sparks.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+        life: 1.0 + Math.random() * 0.7, ch: chs[Math.floor(Math.random() * chs.length)] });
+    }
+  }
+  GAME.pops.push({ x: GAME.W / 2, y: GAME.H * 0.4, life: 2.2, text: "🎆 이해성 특급 등장! 🎆", color: "#ff5fa2" });
+}
+
+// 반짝임 입자 갱신(폭죽/이펙트 공용)
+function updateSparks(dt, gravity){
+  const g = GAME;
+  for(const s of g.sparks){ s.vy += (gravity || 0) * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt; }
+  g.sparks = g.sparks.filter(s => s.life > 0);
+}
+function drawSparks(ctx, g){
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  for(const s of g.sparks){
+    ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.4));
+    ctx.font = "18px serif"; ctx.fillText(s.ch || "✨", s.x, s.y);
+    ctx.globalAlpha = 1;
+  }
+}
+
 function gameRender(){
   const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME;
   drawSky(ctx, W, H);
@@ -1239,6 +1305,7 @@ function gameRender(){
     drawHero(ctx, p.x, p.y - bob, p.size);
   }
 
+  drawSparks(ctx, g);   // 시작 폭죽
   drawPops(ctx, g);
 }
 
