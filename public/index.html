@@ -154,6 +154,19 @@
   }
   .game-hud .hud-time { color: #e0568a; font-weight: bold; }
 
+  /* ⬆ 점프 버튼 (화면 아래 중앙) */
+  .jump-btn {
+    position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%);
+    width: 116px; height: 88px; border-radius: 22px; border: none; cursor: pointer;
+    background: linear-gradient(#ffd76b, #ff9f2e); color: #7a3d00;
+    box-shadow: 0 6px 0 #d97a12, 0 8px 16px rgba(0,0,0,.18);
+    font-family: 'Jua', sans-serif; font-size: 2rem; line-height: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    touch-action: none; user-select: none; z-index: 60; opacity: .96;
+  }
+  .jump-btn span { font-size: .95rem; }
+  .jump-btn:active { transform: translateX(-50%) translateY(6px); box-shadow: 0 0 0 #d97a12, 0 3px 8px rgba(0,0,0,.18); }
+
   /* 게임 안내/종료 화면 — 캔버스에 갇히지 않고 화면 전체를 사용(내용 길면 위에서부터 스크롤) */
   .game-screen {
     position: fixed; inset: 0; z-index: 210; display: flex; flex-direction: column;
@@ -254,6 +267,7 @@
         <span class="hud-chip">❤️ <span id="hudHearts">3</span></span>
         <span class="hud-chip">⭐ <span id="hudScore">0</span></span>
       </div>
+      <button class="jump-btn" id="jumpBtn" style="display:none">⬆<span>점프</span></button>
       <div class="game-screen" id="gameScreen"></div>
     </div>
   </div>
@@ -612,16 +626,21 @@ const GAME = {
   canvas:null, ctx:null, W:0, H:0, dpr:1,
   raf:0, running:false, last:0, elapsed:0,
   groundY:0, speed:0,
+  phase:"play",            // "play" | "rescue"(20초 컷신)
+  rescueT:0, sparks:[],
   player:null, obstacles:[], coins:[], pops:[],
-  spawnObs:0, spawnCoin:0,
+  spawnObs:0, spawnCoin:0, bigSchedule:[],
   coinCount:0, score:0, hearts:3, inv:0,
   heroUrl:"", heroEmoji:"⭐", heroImg:null, heroReady:false,
+  princessImg:null, princessReady:false,
   submitted:false,
 };
 const DUR = 20;          // 게임 길이(초)
 const GRAVITY = 2300;
 const JUMP_V = -780;
 const MAX_JUMPS = 2;
+const RESCUE_DUR = 3.6;  // 공주 구출 컷신 길이(초)
+const BIG_COIN_TIMES = [10, 18]; // 큰 코인(10코인)이 등장하는 시각
 
 function $g(id){ return document.getElementById(id); }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c =>
@@ -640,6 +659,14 @@ function startAdventure(){
     im.src = GAME.heroUrl;
     GAME.heroImg = im;
   }
+  // 납치된 공주(해나) 사진 로드
+  GAME.princessImg = null; GAME.princessReady = false;
+  const pim = new Image();
+  pim.onload = ()=>{ GAME.princessReady = true; };
+  pim.onerror = ()=>{ GAME.princessReady = false; };
+  pim.src = "/img/hn.jpg";
+  GAME.princessImg = pim;
+
   openOverlay();
   showReadyScreen();
 }
@@ -656,6 +683,8 @@ function openOverlay(){
 }
 function closeAdventure(){
   stopLoop();
+  showJumpBtn(false);
+  GAME.phase = "play";
   $g("gameOverlay").style.display = "none";
   document.body.style.overflow = "";
 }
@@ -685,10 +714,10 @@ function showReadyScreen(){
     ${heroImgTag("gs-hero")}
     <p class="gs-sub"><b>${esc(lastTop ? lastTop.name : "친구")}</b>와(과) 함께<br><b>해나 공주</b>를 구하러 ${DUR}초 모험을 떠나요! 👸</p>
     <div class="gs-howto">
-      화면을 <b>탭</b>(또는 스페이스바)하면 <b>점프</b> 🦘<br>
-      🪙 코인은 먹고, 🌵 장애물은 피해요!<br>
-      ❤️ 하트 3개를 다 잃으면 끝나요.<br>
-      ${DUR}초를 버티면 <b>공주를 구하고 왕을 만나요!</b> 👑
+      아래 <b>점프 버튼</b>(또는 <b>스페이스바</b>)을 누르면 <b>점프</b> 🦘 (두 번 누르면 더블점프!)<br>
+      🪙 작은 코인 = <b>1코인</b>, 🟡 큰 코인 = <b>10코인</b>(높이 있어서 더블점프로!)<br>
+      🌵 장애물은 피하고, ❤️ 하트 3개를 다 잃으면 끝나요.<br>
+      ${DUR}초를 버티면 <b>왕이 나타나 공주를 구출!</b> 👑
     </div>
     <div class="gs-row">
       <button class="gs-btn go" onclick="beginRun()">▶ 출발!</button>
@@ -723,13 +752,16 @@ function beginRun(){
     x: Math.max(54, Math.round(GAME.W * 0.16)),
     size, y: GAME.groundY - size, vy: 0, jumps: 0, onGround: true,
   };
-  GAME.obstacles = []; GAME.coins = []; GAME.pops = [];
+  GAME.obstacles = []; GAME.coins = []; GAME.pops = []; GAME.sparks = [];
   GAME.spawnObs = 0.8; GAME.spawnCoin = 0.5;
+  GAME.bigSchedule = BIG_COIN_TIMES.map(at => ({ at, done: false }));
   GAME.coinCount = 0; GAME.score = 0; GAME.hearts = 3; GAME.inv = 0;
   GAME.elapsed = 0; GAME.speed = 250; GAME.submitted = false;
+  GAME.phase = "play"; GAME.rescueT = 0;
 
   $g("gameScreen").classList.add("hidden");
   setHud(true); updateHud();
+  showJumpBtn(true);
 
   bindInput(true);
   GAME.running = true;
@@ -744,24 +776,37 @@ function stopLoop(){
   bindInput(false);
 }
 
-// ── 입력(점프) ──────────────────────────────────────────────
+// ── 입력(점프 / 컷신 스킵) ─────────────────────────────────
+function showJumpBtn(on){
+  const b = $g("jumpBtn");
+  if(b) b.style.display = on ? "flex" : "none";
+}
 function doJump(){
   const p = GAME.player;
-  if(!p || !GAME.running) return;
+  if(!p || !GAME.running || GAME.phase !== "play") return;
   if(p.jumps < MAX_JUMPS){ p.vy = JUMP_V; p.jumps++; p.onGround = false; }
 }
-function onKey(e){
-  if(e.code === "Space" || e.code === "ArrowUp" || e.key === " "){ e.preventDefault(); doJump(); }
+function skipRescue(){
+  if(GAME.running && GAME.phase === "rescue" && GAME.rescueT > 0.6) goToScore();
 }
-function onPointer(e){ e.preventDefault(); doJump(); }
+function onKey(e){
+  if(e.code === "Space" || e.code === "ArrowUp" || e.key === " "){
+    e.preventDefault();
+    if(GAME.phase === "rescue") skipRescue(); else doJump();
+  }
+}
+function onJumpBtn(e){ e.preventDefault(); e.stopPropagation(); doJump(); }
+function onCanvasTap(e){ if(GAME.phase === "rescue"){ e.preventDefault(); skipRescue(); } }
 function bindInput(on){
-  const c = GAME.canvas;
+  const c = GAME.canvas, b = $g("jumpBtn");
   if(on){
     window.addEventListener("keydown", onKey);
-    if(c) c.addEventListener("pointerdown", onPointer);
+    if(b) b.addEventListener("pointerdown", onJumpBtn);
+    if(c) c.addEventListener("pointerdown", onCanvasTap);
   } else {
     window.removeEventListener("keydown", onKey);
-    if(c) c.removeEventListener("pointerdown", onPointer);
+    if(b) b.removeEventListener("pointerdown", onJumpBtn);
+    if(c) c.removeEventListener("pointerdown", onCanvasTap);
   }
 }
 
@@ -772,13 +817,19 @@ function spawnObstacle(){
   GAME.obstacles.push({ x: GAME.W + 30, w, h, y: GAME.groundY - h });
 }
 function spawnCoins(){
-  // 1개 또는 3개 아치형
+  // 작은 코인(1코인): 1개 또는 3개 아치형, 한 번 점프로 닿는 높이
   const cluster = Math.random() < 0.5 ? 3 : 1;
-  const baseY = GAME.groundY - (36 + Math.floor(Math.random() * 110));
+  const baseY = GAME.groundY - (34 + Math.floor(Math.random() * 95));
   for(let i = 0; i < cluster; i++){
-    const arc = cluster === 3 ? -Math.sin((i / 2) * Math.PI) * 34 : 0;
-    GAME.coins.push({ x: GAME.W + 30 + i * 34, y: baseY + arc, r: 13, taken: false });
+    const arc = cluster === 3 ? -Math.sin((i / 2) * Math.PI) * 32 : 0;
+    GAME.coins.push({ x: GAME.W + 30 + i * 34, y: baseY + arc, r: 12, taken: false, big: false });
   }
+}
+function spawnBigCoin(){
+  // 큰 코인(10코인): 높이 있어서 더블점프로만 닿음
+  const y = Math.max(40, GAME.groundY - 232);
+  GAME.coins.push({ x: GAME.W + 40, y, r: 21, taken: false, big: true });
+  GAME.pops.push({ x: GAME.W - 60, y: 40, life: 1.4, text: "✨10코인 등장!", color: "#f0a500" });
 }
 
 // ── 메인 루프 ───────────────────────────────────────────────
@@ -789,13 +840,23 @@ function loop(t){
   GAME.last = t;
   if(dt > 0.05) dt = 0.05;        // 탭 전환 후 점프 방지
 
+  if(GAME.phase === "rescue"){
+    GAME.rescueT += dt;
+    updateRescue(dt);
+    renderRescue();
+    if(GAME.rescueT >= RESCUE_DUR){ goToScore(); return; }
+    GAME.raf = requestAnimationFrame(loop);
+    return;
+  }
+
   GAME.elapsed += dt;
   GAME.speed = 250 + Math.min(GAME.elapsed, DUR) / DUR * 175;
   update(dt);
+  if(!GAME.running) return;       // 도중 사망 시 endRun 에서 처리됨
   gameRender();
   updateHud();
 
-  if(GAME.elapsed >= DUR){ endRun(true); return; }
+  if(GAME.elapsed >= DUR){ startRescue(); }
   GAME.raf = requestAnimationFrame(loop);
 }
 
@@ -817,6 +878,10 @@ function update(dt){
   }
   g.spawnCoin -= dt;
   if(g.spawnCoin <= 0){ spawnCoins(); g.spawnCoin = 0.7 + Math.random() * 0.7; }
+  // 큰 코인: 정해진 시각(10초·18초)에 1번씩 등장
+  for(const b of g.bigSchedule){
+    if(!b.done && g.elapsed >= b.at){ b.done = true; spawnBigCoin(); }
+  }
 
   // 이동 + 충돌
   const pad = p.size * 0.16;
@@ -840,8 +905,10 @@ function update(dt){
     if(!c.taken){
       const dx = c.x - pcx, dy = c.y - pcy;
       if(dx * dx + dy * dy < (pr + c.r) * (pr + c.r)){
-        c.taken = true; g.coinCount++; g.score += 10;
-        g.pops.push({ x: c.x, y: c.y, life: 0.6, text: "+10", color: "#f5a201" });
+        const val = c.big ? 10 : 1;
+        c.taken = true; g.coinCount += val; g.score += val;
+        g.pops.push({ x: c.x, y: c.y, life: c.big ? 0.9 : 0.6,
+          text: "+" + val, color: c.big ? "#e8870a" : "#f5a201" });
       }
     }
   }
@@ -863,53 +930,165 @@ function roundRect(ctx, x, y, w, h, r){
   ctx.closePath();
 }
 
-function gameRender(){
-  const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME;
-  // 하늘
-  const sky = ctx.createLinearGradient(0, 0, 0, H);
-  sky.addColorStop(0, "#bfe6ff"); sky.addColorStop(1, "#eaf7ff");
-  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+// 이미지를 박스에 잘림 없이(cover) 그리기
+function drawImageCover(ctx, img, x, y, w, h){
+  const iw = img.naturalWidth || img.width || 1, ih = img.naturalHeight || img.height || 1;
+  const s = Math.max(w / iw, h / ih), dw = iw * s, dh = ih * s;
+  ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+}
 
-  // 구름 (느린 패럴럭스)
-  const cloudShift = (g.elapsed * 22) % (W + 120);
+function drawSky(ctx, W, H){
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, "#cfe6ff"); sky.addColorStop(.62, "#ecf4ff"); sky.addColorStop(1, "#fdeeda");
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+}
+
+function drawClouds(ctx, W, t){
+  const shift = (t * 22) % (W + 140);
   ctx.fillStyle = "rgba(255,255,255,.85)";
   for(let i = 0; i < 3; i++){
-    const cx = ((i * (W / 2 + 80) - cloudShift) % (W + 120) + W + 120) % (W + 120) - 60;
-    const cy = 34 + i * 24;
+    const cx = ((i * (W / 2 + 90) - shift) % (W + 140) + W + 140) % (W + 140) - 70;
+    const cy = 28 + i * 20;
     ctx.beginPath();
-    ctx.arc(cx, cy, 16, 0, 7); ctx.arc(cx + 18, cy + 4, 20, 0, 7); ctx.arc(cx + 40, cy, 15, 0, 7);
+    ctx.arc(cx, cy, 14, 0, 7); ctx.arc(cx + 17, cy + 4, 18, 0, 7); ctx.arc(cx + 36, cy, 13, 0, 7);
     ctx.fill();
   }
-  // 언덕
-  const hillShift = (g.elapsed * g.speed * 0.25) % 220;
-  ctx.fillStyle = "#bfe9c8";
-  for(let i = -1; i < W / 220 + 1; i++){
-    const hx = i * 220 - hillShift;
-    ctx.beginPath(); ctx.arc(hx + 110, gY + 20, 120, Math.PI, 0); ctx.fill();
-  }
+}
 
-  // 땅
+// 🏰 왕국 성 배경(느린 패럴럭스)
+function drawCastle(ctx, W, gY, scroll){
+  const wallTop = gY - 58;
+  ctx.fillStyle = "#9aa3c6"; ctx.fillRect(0, wallTop, W, gY - wallTop);
+  ctx.fillStyle = "#8b95bd"; ctx.fillRect(0, wallTop, W, 7);
+  // 성벽 톱니
+  ctx.fillStyle = "#8b95bd";
+  const mOff = scroll % 36;
+  for(let x = -mOff; x < W + 36; x += 36) ctx.fillRect(x, wallTop - 11, 20, 12);
+  // 탑
+  const period = 210, off = scroll % period;
+  for(let x = -off - period; x < W + period; x += period){
+    const tx = x + 70, tw = 56, top = gY - 120;
+    ctx.fillStyle = "#8d97bf"; ctx.fillRect(tx, top, tw, gY - top);
+    ctx.fillStyle = "#7d87b2";
+    for(let mx = tx; mx < tx + tw - 6; mx += 18) ctx.fillRect(mx, top - 11, 12, 12);
+    ctx.fillStyle = "#7b6bd0"; // 지붕
+    ctx.beginPath(); ctx.moveTo(tx - 7, top); ctx.lineTo(tx + tw / 2, top - 42); ctx.lineTo(tx + tw + 7, top); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = "#5a4a7a"; ctx.lineWidth = 2; // 깃대
+    ctx.beginPath(); ctx.moveTo(tx + tw / 2, top - 42); ctx.lineTo(tx + tw / 2, top - 60); ctx.stroke();
+    ctx.fillStyle = "#ff7bb0"; // 깃발
+    ctx.beginPath(); ctx.moveTo(tx + tw / 2, top - 60); ctx.lineTo(tx + tw / 2 + 15, top - 55); ctx.lineTo(tx + tw / 2, top - 50); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#5b6699"; // 창문
+    ctx.fillRect(tx + tw / 2 - 6, top + 22, 12, 22);
+    ctx.beginPath(); ctx.arc(tx + tw / 2, top + 22, 6, Math.PI, 0); ctx.fill();
+  }
+}
+
+function drawGround(ctx, W, H, gY, stripePhase){
   ctx.fillStyle = "#8ad08f"; ctx.fillRect(0, gY, W, H - gY);
   ctx.fillStyle = "#73c07a"; ctx.fillRect(0, gY, W, 6);
-  // 땅 줄무늬(빠른 패럴럭스)
   ctx.fillStyle = "rgba(255,255,255,.25)";
-  const stripe = (g.elapsed * g.speed) % 46;
+  const stripe = stripePhase % 46;
   for(let x = -stripe; x < W; x += 46) ctx.fillRect(x, gY + 16, 22, 5);
+}
 
-  // 코인
-  for(const c of g.coins){
-    if(c.taken) continue;
-    ctx.fillStyle = "#ffd23f"; ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, 7); ctx.fill();
-    ctx.lineWidth = 3; ctx.strokeStyle = "#f0a500"; ctx.stroke();
-    ctx.fillStyle = "#f0a500"; ctx.font = "bold " + Math.round(c.r) + "px Jua, sans-serif";
-    ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("★", c.x, c.y + 1);
+function drawHero(ctx, x, py, size){
+  ctx.save();
+  roundRect(ctx, x, py, size, size, 14); ctx.clip();
+  if(GAME.heroReady && GAME.heroImg) drawImageCover(ctx, GAME.heroImg, x, py, size, size);
+  else {
+    ctx.fillStyle = "#fff0f7"; ctx.fillRect(x, py, size, size);
+    ctx.fillStyle = "#000"; ctx.font = Math.round(size * 0.7) + "px serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(GAME.heroEmoji, x + size / 2, py + size / 2 + 2);
   }
+  ctx.restore();
+  ctx.lineWidth = 3; ctx.strokeStyle = "#fff";
+  roundRect(ctx, x, py, size, size, 14); ctx.stroke();
+}
+
+function drawKing(ctx, x, gY, size){
+  ctx.font = size + "px serif"; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+  ctx.fillText("🤴", x, gY + 2);
+}
+
+function drawCoin(ctx, c){
+  ctx.save();
+  if(c.big){ ctx.fillStyle = "rgba(255,210,60,.35)"; ctx.beginPath(); ctx.arc(c.x, c.y, c.r + 6, 0, 7); ctx.fill(); }
+  ctx.fillStyle = c.big ? "#ffce2e" : "#ffd23f";
+  ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, 7); ctx.fill();
+  ctx.lineWidth = c.big ? 4 : 3; ctx.strokeStyle = c.big ? "#d98a00" : "#f0a500"; ctx.stroke();
+  ctx.fillStyle = c.big ? "#9c5b00" : "#f0a500";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.font = "bold " + Math.round(c.r * (c.big ? 0.8 : 1.0)) + "px Jua, sans-serif";
+  ctx.fillText(c.big ? "10" : "1", c.x, c.y + 1);
+  ctx.restore();
+}
+
+function drawPops(ctx, g){
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  for(const pop of g.pops){
+    ctx.globalAlpha = Math.max(0, Math.min(1, pop.life * 2));
+    ctx.fillStyle = pop.color; ctx.font = "bold 18px Jua, sans-serif";
+    ctx.fillText(pop.text, pop.x, pop.y);
+    ctx.globalAlpha = 1;
+  }
+}
+
+// 갇힌 공주(해나 사진) — cx 중심, bottomY 바닥, w 가로폭
+function drawCagedPrincess(ctx, cx, bottomY, w, barsBroken, t){
+  const h = w * 1.15, x = cx - w / 2, y = bottomY - h;
+  ctx.save();
+  roundRect(ctx, x, y, w, h, 8); ctx.clip();
+  if(GAME.princessReady && GAME.princessImg) drawImageCover(ctx, GAME.princessImg, x, y, w, h);
+  else {
+    ctx.fillStyle = "#ffe0ef"; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = "#000"; ctx.font = Math.round(w * 0.6) + "px serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("👸", cx, y + h / 2);
+  }
+  ctx.restore();
+  ctx.lineWidth = 3; ctx.strokeStyle = "#6b5a44"; roundRect(ctx, x, y, w, h, 8); ctx.stroke();
+  if(!barsBroken){
+    ctx.strokeStyle = "rgba(60,48,36,.92)"; ctx.lineWidth = Math.max(2, w * 0.05);
+    for(let i = 1; i < 5; i++){ const bx = x + i * w / 5; ctx.beginPath(); ctx.moveTo(bx, y); ctx.lineTo(bx, y + h); ctx.stroke(); }
+    ctx.lineWidth = Math.max(3, w * 0.06); ctx.strokeStyle = "#5b4a36"; ctx.strokeRect(x, y, w, h);
+    ctx.fillStyle = "#caa53a"; ctx.beginPath(); ctx.arc(cx, y + h, Math.max(5, w * 0.1), 0, 7); ctx.fill();
+  } else {
+    ctx.font = Math.round(w * 0.45) + "px serif"; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+    ctx.fillText("👑", cx, y - 2);
+  }
+}
+
+// 플레이 중 우측 상단의 '납치된 공주' 표시
+function drawCapturedCorner(ctx, W, t){
+  const w = 50, cageH = w * 1.15, cx = W - 36 + Math.sin(t * 7) * 1.5, bottomY = 96;
+  ctx.font = "bold 12px Jua, sans-serif"; ctx.textAlign = "right"; ctx.textBaseline = "middle";
+  ctx.fillStyle = "#d23c6a";
+  ctx.fillText(Math.floor(t * 2) % 2 ? "도와줘요! 🆘" : "공주가 갇혔어!", cx - w / 2 - 6, bottomY - cageH - 8);
+  drawCagedPrincess(ctx, cx, bottomY, w, false, t);
+}
+
+function spawnSparks(x, y){
+  for(let i = 0; i < 16; i++){
+    const a = Math.random() * Math.PI * 2, sp = 80 + Math.random() * 180;
+    GAME.sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 120,
+      life: 0.8 + Math.random() * 0.5, ch: ["✨","💖","⭐","🌟"][Math.floor(Math.random() * 4)] });
+  }
+}
+
+function gameRender(){
+  const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME;
+  drawSky(ctx, W, H);
+  drawClouds(ctx, W, g.elapsed);
+  drawCastle(ctx, W, gY, g.elapsed * 60);
+  drawGround(ctx, W, H, gY, g.elapsed * g.speed);
+
+  // 코인(작은 1코인 / 큰 10코인)
+  for(const c of g.coins){ if(!c.taken) drawCoin(ctx, c); }
 
   // 장애물 (선인장풍)
   for(const o of g.obstacles){
     ctx.fillStyle = "#3fae5a";
     roundRect(ctx, o.x, o.y, o.w, o.h, Math.min(8, o.w / 2)); ctx.fill();
-    // 팔
     if(o.h > 40){
       const ay = o.y + o.h * 0.4;
       roundRect(ctx, o.x - 7, ay, 7, Math.min(18, o.h * 0.3), 4); ctx.fill();
@@ -917,6 +1096,9 @@ function gameRender(){
     }
     ctx.fillStyle = "#2f9249"; ctx.fillRect(o.x + o.w * 0.3, o.y + 6, 3, o.h - 12);
   }
+
+  // 납치된 공주(해나) — 우측 상단
+  drawCapturedCorner(ctx, W, g.elapsed);
 
   // 그림자
   const p = g.player;
@@ -928,37 +1110,88 @@ function gameRender(){
   const blink = g.inv > 0 && Math.floor(g.elapsed * 14) % 2 === 0;
   if(!blink){
     const bob = p.onGround ? Math.abs(Math.sin(g.elapsed * 11)) * 3 : 0;
-    const py = p.y - bob;
-    ctx.save();
-    roundRect(ctx, p.x, py, p.size, p.size, 14); ctx.clip();
-    if(GAME.heroReady && GAME.heroImg){
-      ctx.drawImage(GAME.heroImg, p.x, py, p.size, p.size);
-    } else {
-      ctx.fillStyle = "#fff0f7"; ctx.fillRect(p.x, py, p.size, p.size);
-      ctx.fillStyle = "#000"; ctx.font = Math.round(p.size * 0.7) + "px serif";
-      ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillText(GAME.heroEmoji, p.x + p.size / 2, py + p.size / 2 + 2);
-    }
-    ctx.restore();
-    ctx.lineWidth = 3; ctx.strokeStyle = "#fff";
-    roundRect(ctx, p.x, py, p.size, p.size, 14); ctx.stroke();
+    drawHero(ctx, p.x, p.y - bob, p.size);
   }
 
-  // 점수 팝업
-  for(const pop of g.pops){
-    ctx.globalAlpha = Math.max(0, Math.min(1, pop.life * 2));
-    ctx.fillStyle = pop.color; ctx.font = "bold 18px Jua, sans-serif";
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText(pop.text, pop.x, pop.y);
-    ctx.globalAlpha = 1;
+  drawPops(ctx, g);
+}
+
+// ── 🏰 공주 구출 컷신(20초 후) ─────────────────────────────
+function startRescue(){
+  GAME.phase = "rescue"; GAME.rescueT = 0; GAME.sparks = []; GAME.pops = [];
+  GAME.obstacles = []; GAME.coins = [];
+  setHud(false); showJumpBtn(false);
+  GAME.player.vy = 0;
+  GAME.rescue = {
+    px: GAME.player.x, pTarget: Math.round(GAME.W * 0.33),
+    kingX: GAME.W + 90, kingTarget: Math.round(GAME.W * 0.72),
+    cageX: Math.round(GAME.W * 0.55), barsBroken: false,
+  };
+}
+
+function updateRescue(dt){
+  const g = GAME, r = GAME.rescue, p = g.player;
+  r.px += (r.pTarget - r.px) * Math.min(1, dt * 4);
+  r.kingX += (r.kingTarget - r.kingX) * Math.min(1, dt * 3);
+  p.vy += GRAVITY * dt; p.y += p.vy * dt;
+  const floor = g.groundY - p.size; if(p.y >= floor){ p.y = floor; p.vy = 0; }
+  if(!r.barsBroken && g.rescueT > 1.6){
+    r.barsBroken = true;
+    spawnSparks(r.cageX, g.groundY - p.size);
+    g.pops.push({ x: r.cageX, y: g.groundY - 120, life: 1.8, text: "공주 구출! 🎉", color: "#e0568a" });
   }
+  for(const s of g.sparks){ s.vy += 520 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt; }
+  g.sparks = g.sparks.filter(s => s.life > 0);
+  for(const pop of g.pops){ pop.life -= dt; pop.y -= 24 * dt; }
+  g.pops = g.pops.filter(pp => pp.life > 0);
+}
+
+function renderRescue(){
+  const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME, r = GAME.rescue;
+  drawSky(ctx, W, H);
+  drawClouds(ctx, W, g.elapsed);
+  drawCastle(ctx, W, gY, g.elapsed * 60);
+  drawGround(ctx, W, H, gY, g.elapsed * g.speed);
+
+  const cageW = Math.min(120, Math.round(H * 0.32));
+  drawCagedPrincess(ctx, r.cageX, gY, cageW, r.barsBroken, g.rescueT);
+  drawKing(ctx, r.kingX, gY, Math.min(96, Math.round(g.player.size * 1.3)));
+  drawHero(ctx, r.px, g.player.y, g.player.size);
+
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  for(const s of g.sparks){
+    ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.6));
+    ctx.font = "20px serif"; ctx.fillText(s.ch, s.x, s.y); ctx.globalAlpha = 1;
+  }
+
+  // 상단 배너
+  const bw = Math.min(320, W - 20);
+  ctx.fillStyle = "rgba(255,255,255,.88)"; roundRect(ctx, W / 2 - bw / 2, 12, bw, 44, 14); ctx.fill();
+  ctx.fillStyle = "#e0568a"; ctx.font = "bold 19px Jua, sans-serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(r.barsBroken ? "👑 왕이 공주를 구했어요! 🎉" : "👑 왕이 달려옵니다...", W / 2, 34);
+
+  drawPops(ctx, g);
+
+  if(g.rescueT > 0.8){
+    ctx.fillStyle = "rgba(90,74,102,.85)"; ctx.font = "14px Jua, sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+    ctx.fillText("탭 또는 스페이스로 계속 ▶", W / 2, H - 12);
+  }
+}
+
+function goToScore(){
+  if(GAME.phase !== "rescue") return;
+  GAME.phase = "play";
+  endRun(true);
 }
 
 // ── 종료 ────────────────────────────────────────────────────
 function endRun(success){
   stopLoop();
+  showJumpBtn(false);
   let bonus = 0;
-  if(success){ bonus = 100 + GAME.hearts * 30; GAME.score += bonus; }
+  if(success){ bonus = 30 + GAME.hearts * 10; GAME.score += bonus; }
   updateHud();
   const lastName = (function(){ try{ return localStorage.getItem("hh_name") || ""; }catch(e){ return ""; } })();
   setHud(false);
