@@ -121,6 +121,17 @@
   .sun-egg:hover { opacity: .95; transform: scale(1.3) rotate(25deg); filter: none; }
   .sun-egg:active { transform: scale(.85); }
 
+  /* 💗 세 번째 비밀 (화면 왼쪽 위, 희미하게 두근거리는 하트) → 해나공주 비밀 캐릭터 */
+  .heart-egg {
+    position: fixed; left: 16px; top: 14px; font-size: 1.7rem;
+    opacity: .14; cursor: pointer; user-select: none; z-index: 50;
+    transition: opacity .3s, transform .3s; filter: grayscale(.2);
+    animation: heartFaint 2.2s ease-in-out infinite;
+  }
+  .heart-egg:hover { opacity: .98; transform: scale(1.35); filter: none; animation: none; }
+  .heart-egg:active { transform: scale(.85); }
+  @keyframes heartFaint { 0%,100% { opacity:.12; transform:scale(1); } 50% { opacity:.3; transform:scale(1.12); } }
+
   /* 🏃 모험 버튼 (결과 화면) */
   .btn-adventure {
     margin: 8px 0 4px; border: none; cursor: pointer; font-family: 'Jua', sans-serif;
@@ -284,6 +295,8 @@
   <div class="egg" id="egg" onclick="showEevee()" title="?">🥚</div>
   <!-- 결과 화면 왼쪽 아래 햇님 → 이해성 특급 모드 -->
   <div class="sun-egg" id="sunEgg" onclick="playAsHaesung()" title="?" style="display:none">☀️</div>
+  <!-- 화면 왼쪽 위 희미한 하트 → 해나공주 비밀 캐릭터 -->
+  <div class="heart-egg" id="heartEgg" onclick="playAsHana()" title="?">💗</div>
 
   <!-- 🎮 모험 게임 오버레이 -->
   <div class="game-overlay" id="gameOverlay" style="display:none">
@@ -675,6 +688,8 @@ const GAME = {
   heroUrl:"", heroEmoji:"⭐", heroImg:null, heroReady:false,
   princessImg:null, princessReady:false,
   startHearts:0, fireworks:false,
+  hanaMode:false,          // 💗 해나공주 비밀 모드(꽃산 배경 + 핑크 용 + 점프 하트)
+  captiveUrl:"", captiveName:"", captiveEmoji:"👸", captiveLabel:"", kingLabel:"",
   submitted:false,
 };
 const DUR = 30;          // 게임 길이(초)
@@ -708,12 +723,28 @@ function playAsHaesung(){
   startAdventure({ hearts: 20, fireworks: true });
 }
 
+// 💗 비밀 캐릭터: 해나공주(왼쪽 위 하트) — 이해나 사진 + 꽃산 배경 + 핑크 용
+function playAsHana(){
+  lastTop = { name: "해나공주", image: "/img/hn.jpg", emoji: "👸",
+    keywords: ["공주", "사랑스러운", "꽃", "마법"] };
+  startAdventure({ hearts: 10, hana: true });
+}
+
 // ── 진입점: 결과 화면의 모험 버튼 ───────────────────────────
 function startAdventure(opts){
   if(!lastTop){ return; }
   opts = opts || {};
   GAME.startHearts = opts.hearts || START_HEARTS;
   GAME.fireworks = !!opts.fireworks;
+  GAME.hanaMode = !!opts.hana;
+  // 갇힌 대상: 해나공주 모드면 해성 왕자를, 그 외엔 해나 공주를 구하러 간다
+  if(GAME.hanaMode){
+    GAME.captiveUrl = "/img/hs.jpg"; GAME.captiveName = "해성 왕자";
+    GAME.captiveEmoji = "🤴"; GAME.captiveLabel = "🤴 해성 왕자"; GAME.kingLabel = "👑 해성 아빠 왕";
+  } else {
+    GAME.captiveUrl = "/img/hn.jpg"; GAME.captiveName = "해나 공주";
+    GAME.captiveEmoji = "👸"; GAME.captiveLabel = "👸 해나 공주"; GAME.kingLabel = "👑 해나 아빠 왕";
+  }
   toggleSun(false);
   GAME.heroUrl = lastTop.image || "";
   GAME.heroEmoji = lastTop.emoji || "⭐";
@@ -725,12 +756,12 @@ function startAdventure(opts){
     im.src = GAME.heroUrl;
     GAME.heroImg = im;
   }
-  // 납치된 공주(해나) 사진 로드
+  // 납치된 대상(공주/왕자) 사진 로드
   GAME.princessImg = null; GAME.princessReady = false;
   const pim = new Image();
   pim.onload = ()=>{ GAME.princessReady = true; };
   pim.onerror = ()=>{ GAME.princessReady = false; };
-  pim.src = "/img/hn.jpg";
+  pim.src = GAME.captiveUrl;
   GAME.princessImg = pim;
 
   openOverlay();
@@ -777,16 +808,18 @@ function showReadyScreen(){
   const s = $g("gameScreen");
   s.classList.remove("hidden");
   const sh = GAME.startHearts || START_HEARTS;
+  const readyTitle = GAME.hanaMode ? "💗 해나공주 비밀 모드! 💗"
+    : (GAME.fireworks ? "🎆 이해성 특급 모드! 🎆" : "공주를 구하러! 🏁");
   s.innerHTML = `
-    <h2 class="gs-title">${GAME.fireworks ? "🎆 이해성 특급 모드! 🎆" : "공주를 구하러! 🏁"}</h2>
+    <h2 class="gs-title">${readyTitle}</h2>
     ${heroImgTag("gs-hero")}
-    <p class="gs-sub"><b>${esc(lastTop ? lastTop.name : "친구")}</b>와(과) 함께<br><b>해나 공주</b>를 구하러 ${DUR}초 모험을 떠나요! 👸</p>
+    <p class="gs-sub"><b>${esc(lastTop ? lastTop.name : "친구")}</b>와(과) 함께<br><b>${esc(GAME.captiveName || "해나 공주")}</b>를 구하러 ${DUR}초 모험을 떠나요! ${GAME.captiveEmoji || "👸"}</p>
     <div class="gs-howto">
       아래 <b>점프 버튼</b>(또는 <b>스페이스바</b>)을 누르면 <b>점프</b> 🦘 (두 번 누르면 더블점프!)<br>
       🪙 작은 코인 = <b>1코인</b>, 🟡 큰 코인 = <b>10코인</b>(더블점프로!)<br>
       ❤️ 하트 <b>${sh}개</b>로 시작! 10초·20초에 <b>보너스 하트</b>를 먹어요.<br>
       🕳️ <b>구멍</b>은 뛰어넘고, 🌵 <b>큰 선인장</b>은 <b>2단 점프</b>로 넘어요!<br>
-      ${DUR}초 버티면 <b>🐉 용 등장!</b> 🔥<b>공격</b>으로 장풍 <b>${DRAGON_HP}번</b> 명중→용을 무찌르고 공주 구출! (용의 불은 점프로 회피)
+      ${DUR}초 버티면 <b>${GAME.hanaMode ? "💗 핑크 용" : "🐉 용"} 등장!</b> 🔥<b>공격</b>으로 장풍 <b>${DRAGON_HP}번</b> 명중→용을 무찌르고 ${esc(GAME.captiveName || "공주")} 구출! (용의 불은 점프로 회피)
     </div>
     <div class="gs-row">
       <button class="gs-btn go" onclick="beginRun()">▶ 출발!</button>
@@ -833,7 +866,12 @@ function beginRun(){
   $g("gameScreen").classList.add("hidden");
   setHud(true); updateHud();
   showJumpBtn(true);
-  if(GAME.fireworks) spawnFireworks();
+  if(GAME.hanaMode){
+    spawnFireworks(); spawnHanaIntro();   // 폭죽 + 하트가 뿅뿅
+  } else if(GAME.fireworks){
+    spawnFireworks();
+    GAME.pops.push({ x: GAME.W / 2, y: GAME.H * 0.4, life: 2.2, text: "🎆 이해성 특급 등장! 🎆", color: "#ff5fa2" });
+  }
 
   bindInput(true);
   GAME.running = true;
@@ -862,7 +900,10 @@ function doJump(){
   const p = GAME.player;
   if(!p || !GAME.running) return;
   if(GAME.phase !== "play" && GAME.phase !== "boss") return;  // 점프는 플레이/보스전에서
-  if(p.jumps < MAX_JUMPS){ p.vy = JUMP_V; p.jumps++; p.onGround = false; }
+  if(p.jumps < MAX_JUMPS){
+    p.vy = JUMP_V; p.jumps++; p.onGround = false;
+    if(GAME.hanaMode) spawnJumpHearts(p.x + p.size / 2, p.y + p.size);  // 점프마다 하트·별
+  }
 }
 function doAttack(){
   const g = GAME, b = g.boss;
@@ -1094,7 +1135,12 @@ function drawImageCover(ctx, img, x, y, w, h){
 
 function drawSky(ctx, W, H){
   const sky = ctx.createLinearGradient(0, 0, 0, H);
-  sky.addColorStop(0, "#cfe6ff"); sky.addColorStop(.62, "#ecf4ff"); sky.addColorStop(1, "#fdeeda");
+  if(GAME.hanaMode){
+    // 꽃이 피는 산속의 포근한 분홍-연두 하늘
+    sky.addColorStop(0, "#ffe1ef"); sky.addColorStop(.58, "#fff1f8"); sky.addColorStop(1, "#eafbe6");
+  } else {
+    sky.addColorStop(0, "#cfe6ff"); sky.addColorStop(.62, "#ecf4ff"); sky.addColorStop(1, "#fdeeda");
+  }
   ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
 }
 
@@ -1144,6 +1190,75 @@ function drawGround(ctx, W, H, gY, stripePhase){
   ctx.fillStyle = "rgba(255,255,255,.25)";
   const stripe = stripePhase % 46;
   for(let x = -stripe; x < W; x += 46) ctx.fillRect(x, gY + 16, 22, 5);
+}
+
+// 🌸 해나공주 배경: 멀리 보이는 부드러운 산 능선(패럴럭스)
+function drawHills(ctx, W, gY, scroll){
+  const hills = [
+    { c: "#d3efce", h: 150, p: 320, sp: 0.22 },
+    { c: "#b6e3ae", h: 210, p: 400, sp: 0.46 },
+  ];
+  for(const L of hills){
+    ctx.fillStyle = L.c;
+    const off = ((scroll * L.sp) % L.p + L.p) % L.p;
+    for(let x = -off - L.p; x < W + L.p; x += L.p){
+      const cx = x + L.p / 2;
+      ctx.beginPath();
+      ctx.moveTo(x, gY + 4);
+      ctx.quadraticCurveTo(cx, gY - L.h, x + L.p, gY + 4);
+      ctx.closePath(); ctx.fill();
+    }
+  }
+}
+
+// 작은 꽃 한 송이(5장 꽃잎 + 노란 꽃술)
+function drawFlower(ctx, x, y, r, color){
+  if(r < 0.6) return;
+  ctx.save();
+  ctx.fillStyle = color;
+  for(let i = 0; i < 5; i++){
+    const a = (i / 5) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.ellipse(x + Math.cos(a) * r, y + Math.sin(a) * r, r * 0.72, r * 0.5, a, 0, 7);
+    ctx.fill();
+  }
+  ctx.fillStyle = "#ffe27a";
+  ctx.beginPath(); ctx.arc(x, y, r * 0.55, 0, 7); ctx.fill();
+  ctx.restore();
+}
+
+// 🌷 앞쪽 들판에 피어나는 꽃들(시간에 따라 봉오리→활짝 반복 = '꽃이 피고 있는')
+function drawBloomingFlowers(ctx, W, gY, scroll, t){
+  const COLORS = ["#ff8fc0", "#ff6fa6", "#ffb3d4", "#c79bff", "#ff9ec8", "#ffd36b"];
+  const period = 78;
+  const off = ((scroll % period) + period) % period;
+  for(let x = -off; x < W + period; x += period){
+    const seed = Math.round((x + scroll) / period);
+    const jitter = Math.abs(Math.sin(seed * 12.9898)) * 46;
+    const fx = x + jitter;
+    const baseR = 8 + Math.abs(Math.sin(seed * 7.13)) * 7;
+    const bloom = 0.4 + 0.6 * Math.abs(Math.sin(t * 1.3 + seed * 1.7)); // 0.4~1.0로 피었다 오므림
+    const col = COLORS[((seed % COLORS.length) + COLORS.length) % COLORS.length];
+    const r = baseR * bloom;
+    const fy = gY + 4 - 8 - r * 1.3;
+    ctx.strokeStyle = "#5cae5f"; ctx.lineWidth = 3; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(fx, gY + 6); ctx.lineTo(fx, fy); ctx.stroke();
+    drawFlower(ctx, fx, fy, r, col);
+  }
+}
+
+// 배경 한 번에 그리기(모드에 따라 성/왕국 ↔ 꽃 피는 산속)
+function drawWorld(ctx, W, H, gY, g){
+  drawSky(ctx, W, H);
+  drawClouds(ctx, W, g.elapsed);
+  if(g.hanaMode){
+    drawHills(ctx, W, gY, g.elapsed * 40);
+    drawGround(ctx, W, H, gY, g.elapsed * g.speed);
+    drawBloomingFlowers(ctx, W, gY, g.elapsed * g.speed, g.elapsed);
+  } else {
+    drawCastle(ctx, W, gY, g.elapsed * 60);
+    drawGround(ctx, W, H, gY, g.elapsed * g.speed);
+  }
 }
 
 // 바닥 구멍(낭떠러지) 그리기 — drawGround 다음에 호출해 땅을 파냄
@@ -1223,7 +1338,7 @@ function drawCagedPrincess(ctx, cx, bottomY, w, barsBroken, t){
   else {
     ctx.fillStyle = "#ffe0ef"; ctx.fillRect(x, y, w, h);
     ctx.fillStyle = "#000"; ctx.font = Math.round(w * 0.6) + "px serif";
-    ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("👸", cx, y + h / 2);
+    ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(GAME.captiveEmoji || "👸", cx, y + h / 2);
   }
   ctx.restore();
   ctx.lineWidth = 3; ctx.strokeStyle = "#6b5a44"; roundRect(ctx, x, y, w, h, 8); ctx.stroke();
@@ -1243,7 +1358,7 @@ function drawCapturedCorner(ctx, W, t){
   const w = 50, cageH = w * 1.15, cx = W - 36 + Math.sin(t * 7) * 1.5, bottomY = 96;
   ctx.font = "bold 12px Jua, sans-serif"; ctx.textAlign = "right"; ctx.textBaseline = "middle";
   ctx.fillStyle = "#d23c6a";
-  ctx.fillText(Math.floor(t * 2) % 2 ? "도와줘요! 🆘" : "공주가 갇혔어!", cx - w / 2 - 6, bottomY - cageH - 8);
+  ctx.fillText(Math.floor(t * 2) % 2 ? "도와줘요! 🆘" : (GAME.captiveName || "공주") + "가 갇혔어!", cx - w / 2 - 6, bottomY - cageH - 8);
   drawCagedPrincess(ctx, cx, bottomY, w, false, t);
 }
 
@@ -1266,7 +1381,27 @@ function spawnFireworks(){
         life: 1.0 + Math.random() * 0.7, ch: chs[Math.floor(Math.random() * chs.length)] });
     }
   }
-  GAME.pops.push({ x: GAME.W / 2, y: GAME.H * 0.4, life: 2.2, text: "🎆 이해성 특급 등장! 🎆", color: "#ff5fa2" });
+}
+
+// 💗 해나공주 등장 연출: 하트가 바닥에서 뿅뿅 솟아오름
+function spawnHanaIntro(){
+  const chs = ["💖","💕","💗","💓","💝","🌸","✨","🌟"];
+  for(let i = 0; i < 28; i++){
+    const x = GAME.W * Math.random();
+    GAME.sparks.push({ x, y: GAME.H + 12, vx: (Math.random() - 0.5) * 90, vy: -(170 + Math.random() * 200),
+      life: 1.2 + Math.random() * 0.9, ch: chs[Math.floor(Math.random() * chs.length)] });
+  }
+  GAME.pops.push({ x: GAME.W / 2, y: GAME.H * 0.34, life: 2.4, text: "💗 해나공주 등장! 💗", color: "#ff5fa2" });
+}
+
+// 💖 해나공주 점프 이펙트: 발밑에서 하트와 별이 퍼짐
+function spawnJumpHearts(x, y){
+  const chs = ["💖","⭐","✨","💕","🌟","💗"];
+  for(let i = 0; i < 7; i++){
+    const a = -Math.PI / 2 + (Math.random() - 0.5) * 1.7, sp = 70 + Math.random() * 130;
+    GAME.sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40,
+      life: 0.6 + Math.random() * 0.4, ch: chs[Math.floor(Math.random() * chs.length)] });
+  }
 }
 
 // 반짝임 입자 갱신(폭죽/이펙트 공용)
@@ -1286,10 +1421,7 @@ function drawSparks(ctx, g){
 
 function gameRender(){
   const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME;
-  drawSky(ctx, W, H);
-  drawClouds(ctx, W, g.elapsed);
-  drawCastle(ctx, W, gY, g.elapsed * 60);
-  drawGround(ctx, W, H, gY, g.elapsed * g.speed);
+  drawWorld(ctx, W, H, gY, g);
   drawPits(ctx, g.pits, gY, H);
 
   // 코인(작은 1코인 / 큰 10코인)
@@ -1333,13 +1465,93 @@ function gameRender(){
 // ── 🐉 용 보스전(30초 후) ──────────────────────────────────
 function drawDragon(ctx, dr, t){
   const size = 88, dy = Math.sin(t * 3) * 8, x = dr.x, y = dr.y + dy;
-  if(dr.flash > 0){ ctx.fillStyle = "rgba(255,80,80,.55)"; ctx.beginPath(); ctx.arc(x, y, size * 0.55, 0, 7); ctx.fill(); }
-  ctx.font = size + "px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillText("🐉", x, y);
+  if(GAME.hanaMode){
+    drawPinkDragonBody(ctx, x, y, size, dr.flash, t);   // 💗 이쁜 핑크 용
+  } else {
+    if(dr.flash > 0){ ctx.fillStyle = "rgba(255,80,80,.55)"; ctx.beginPath(); ctx.arc(x, y, size * 0.55, 0, 7); ctx.fill(); }
+    ctx.font = size + "px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("🐉", x, y);
+  }
   // 용 HP 핍
   const n = DRAGON_HP, pipW = 17, totW = n * pipW;
-  ctx.font = "14px serif";
+  ctx.font = "14px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
   for(let i = 0; i < n; i++) ctx.fillText(i < dr.hp ? "❤️" : "🖤", x - totW / 2 + pipW / 2 + i * pipW, y - size * 0.58);
+}
+
+// 작은 하트(핑크 용 장식·꼬리·갈기용)
+function drawMiniHeart(ctx, cx, cy, r, color){
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + r * 0.8);
+  ctx.bezierCurveTo(cx + r * 1.3, cy - r * 0.3, cx + r * 0.5, cy - r * 1.1, cx, cy - r * 0.35);
+  ctx.bezierCurveTo(cx - r * 0.5, cy - r * 1.1, cx - r * 1.3, cy - r * 0.3, cx, cy + r * 0.8);
+  ctx.closePath(); ctx.fill();
+}
+
+// 💗 직접 그리는 이쁜 핑크 용(머리는 왼쪽=용사 방향, 작은 왕관 + 하트 꼬리)
+function drawPinkDragonBody(ctx, x, y, size, flash, t){
+  const s = size / 88;
+  ctx.save();
+  ctx.translate(x, y);
+  // 피격 섬광 + 분홍 오라
+  if(flash > 0){ ctx.fillStyle = "rgba(255,255,255,.6)"; ctx.beginPath(); ctx.arc(0, 0, size * 0.62, 0, 7); ctx.fill(); }
+  ctx.fillStyle = "rgba(255,150,200,.25)"; ctx.beginPath(); ctx.arc(0, 0, size * 0.55, 0, 7); ctx.fill();
+
+  const flap = Math.sin(t * 6) * 10 * s;
+  // 날개(뒤쪽)
+  ctx.fillStyle = "#ff9ed0";
+  ctx.beginPath();
+  ctx.moveTo(10 * s, -4 * s);
+  ctx.quadraticCurveTo(48 * s, (-38 * s) - flap, 56 * s, 0);
+  ctx.quadraticCurveTo(40 * s, -4 * s, 12 * s, 8 * s);
+  ctx.closePath(); ctx.fill();
+
+  // 꼬리(끝에 하트)
+  const tx = 40 * s + Math.sin(t * 4) * 6 * s, ty = -6 * s;
+  ctx.strokeStyle = "#ff7ec0"; ctx.lineWidth = 9 * s; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(16 * s, 12 * s); ctx.quadraticCurveTo(48 * s, 22 * s, tx, ty); ctx.stroke();
+  drawMiniHeart(ctx, tx, ty - 2 * s, 7 * s, "#ff5fa2");
+
+  // 몸통 + 배
+  ctx.fillStyle = "#ff8ec8";
+  ctx.beginPath(); ctx.ellipse(8 * s, 4 * s, 30 * s, 26 * s, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = "#ffd0e8";
+  ctx.beginPath(); ctx.ellipse(2 * s, 12 * s, 18 * s, 15 * s, 0, 0, 7); ctx.fill();
+
+  // 등 갈기(하트 스파이크)
+  for(let i = 0; i < 3; i++) drawMiniHeart(ctx, (2 - i * 12) * s, -16 * s, 5 * s, "#ff5fa2");
+
+  // 머리 + 주둥이
+  ctx.fillStyle = "#ff8ec8";
+  ctx.beginPath(); ctx.ellipse(-24 * s, -6 * s, 20 * s, 18 * s, 0, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(-38 * s, 0, 10 * s, 8 * s, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = "#d8569a";
+  ctx.beginPath(); ctx.arc(-44 * s, -1 * s, 1.6 * s, 0, 7); ctx.fill();
+
+  // 뿔
+  ctx.fillStyle = "#fff0f7";
+  ctx.beginPath(); ctx.moveTo(-12 * s, -20 * s); ctx.lineTo(-10 * s, -34 * s); ctx.lineTo(-4 * s, -20 * s); ctx.closePath(); ctx.fill();
+
+  // 볼터치
+  ctx.fillStyle = "rgba(255,120,170,.55)";
+  ctx.beginPath(); ctx.arc(-31 * s, 4 * s, 4.5 * s, 0, 7); ctx.fill();
+
+  // 큐트한 눈
+  ctx.fillStyle = "#3a2a33";
+  ctx.beginPath(); ctx.arc(-27 * s, -8 * s, 4 * s, 0, 7); ctx.fill();
+  ctx.fillStyle = "#fff";
+  ctx.beginPath(); ctx.arc(-28.5 * s, -9.5 * s, 1.5 * s, 0, 7); ctx.fill();
+
+  // 작은 왕관(이쁜 공주 용)
+  ctx.fillStyle = "#ffd86b";
+  ctx.beginPath();
+  ctx.moveTo(-33 * s, -22 * s); ctx.lineTo(-31 * s, -31 * s); ctx.lineTo(-27 * s, -25 * s);
+  ctx.lineTo(-24 * s, -32 * s); ctx.lineTo(-21 * s, -25 * s); ctx.lineTo(-18 * s, -31 * s);
+  ctx.lineTo(-16 * s, -22 * s); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#ff5fa2";
+  ctx.beginPath(); ctx.arc(-24 * s, -32 * s, 1.8 * s, 0, 7); ctx.fill();
+
+  ctx.restore();
 }
 function drawKiBlast(ctx, x, y, r){
   ctx.save();
@@ -1367,7 +1579,9 @@ function startBoss(){
     shots: [], fires: [], fireTimer: 1.3, atkCD: 0, defeated: false, defeatT: 0, t: 0,
   };
   setHud(true); showJumpBtn(true); showAttackBtn(true);
-  g.pops.push({ x: g.W / 2, y: 48, life: 2.8, text: "🐉 용 등장! 🔥공격으로 장풍 " + DRAGON_HP + "번!", color: "#c0392b" });
+  g.pops.push({ x: g.W / 2, y: 48, life: 2.8,
+    text: (g.hanaMode ? "💗 핑크 용 등장! " : "🐉 용 등장! ") + "🔥공격으로 장풍 " + DRAGON_HP + "번!",
+    color: g.hanaMode ? "#e0568a" : "#c0392b" });
 }
 
 function updateBoss(dt){
@@ -1439,8 +1653,7 @@ function updateBoss(dt){
 
 function renderBoss(){
   const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME, b = GAME.boss;
-  drawSky(ctx, W, H); drawClouds(ctx, W, g.elapsed);
-  drawCastle(ctx, W, gY, g.elapsed * 60); drawGround(ctx, W, H, gY, g.elapsed * g.speed);
+  drawWorld(ctx, W, H, gY, g);
   // 용에게 잡힌 공주(위쪽)
   drawCagedPrincess(ctx, Math.round(W * 0.9), Math.min(gY - 20, 126), 46, false, b.t);
   if(!b.defeated) drawDragon(ctx, b.dragon, b.t);
@@ -1479,7 +1692,7 @@ function updateRescue(dt){
   if(!r.barsBroken && g.rescueT > 1.6){
     r.barsBroken = true;
     spawnSparks(r.cageX, g.groundY - p.size);
-    g.pops.push({ x: r.cageX, y: g.groundY - 120, life: 1.8, text: "공주 구출! 🎉", color: "#e0568a" });
+    g.pops.push({ x: r.cageX, y: g.groundY - 120, life: 1.8, text: (g.captiveName || "공주") + " 구출! 🎉", color: "#e0568a" });
   }
   for(const s of g.sparks){ s.vy += 520 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt; }
   g.sparks = g.sparks.filter(s => s.life > 0);
@@ -1489,10 +1702,7 @@ function updateRescue(dt){
 
 function renderRescue(){
   const ctx = GAME.ctx, W = GAME.W, H = GAME.H, gY = GAME.groundY, g = GAME, r = GAME.rescue;
-  drawSky(ctx, W, H);
-  drawClouds(ctx, W, g.elapsed);
-  drawCastle(ctx, W, gY, g.elapsed * 60);
-  drawGround(ctx, W, H, gY, g.elapsed * g.speed);
+  drawWorld(ctx, W, H, gY, g);
 
   const cageW = Math.min(120, Math.round(H * 0.32));
   drawCagedPrincess(ctx, r.cageX, gY, cageW, r.barsBroken, g.rescueT);
@@ -1510,7 +1720,7 @@ function renderRescue(){
   ctx.fillStyle = "rgba(255,255,255,.88)"; roundRect(ctx, W / 2 - bw / 2, 12, bw, 44, 14); ctx.fill();
   ctx.fillStyle = "#e0568a"; ctx.font = "bold 19px Jua, sans-serif";
   ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillText(r.barsBroken ? "👑 왕이 공주를 구했어요! 🎉" : "👑 왕이 달려옵니다...", W / 2, 34);
+  ctx.fillText(r.barsBroken ? "👑 왕이 " + (GAME.captiveName || "공주") + "를 구했어요! 🎉" : "👑 왕이 달려옵니다...", W / 2, 34);
 
   drawPops(ctx, g);
 
@@ -1538,25 +1748,26 @@ function endRun(success){
   const lastName = (function(){ try{ return localStorage.getItem("hh_name") || ""; }catch(e){ return ""; } })();
   setHud(false);
   const heroName = lastTop ? lastTop.name : "용사";
+  const capName = GAME.captiveName || "해나 공주";
   const ending = success ? `
     <div class="ending-scene">
       <div class="ending-cast">
         <div class="cast">
           <div class="cast-emoji cast-king">🤴</div>
-          <div class="cast-label">👑 해나 아빠 왕</div>
+          <div class="cast-label">${esc(GAME.kingLabel || "👑 해나 아빠 왕")}</div>
         </div>
         <div class="cast">
-          <img class="cast-img" src="/img/hn.jpg" alt="해나 공주"
-            onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cast-emoji',textContent:'👸'}))">
-          <div class="cast-label">👸 해나 공주</div>
+          <img class="cast-img" src="${esc(GAME.captiveUrl || "/img/hn.jpg")}" alt="${esc(capName)}"
+            onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cast-emoji',textContent:'${esc(GAME.captiveEmoji || "👸")}'}))">
+          <div class="cast-label">${esc(GAME.captiveLabel || "👸 해나 공주")}</div>
         </div>
       </div>
-      <div class="ending-speech">"오, 용감한 <b>${esc(heroName)}</b>! 🎉<br><b>해나 공주</b>를 무사히 구해줘서 고맙네!" 👑✨</div>
+      <div class="ending-speech">"오, 용감한 <b>${esc(heroName)}</b>! 🎉<br><b>${esc(capName)}</b>를 무사히 구해줘서 고맙네!" 👑✨</div>
     </div>` : "";
   const s = $g("gameScreen");
   s.classList.remove("hidden");
   s.innerHTML = `
-    <h2 class="gs-title">${success ? "골인! 공주 구출 성공! 🎉" : "게임 끝! 🐾"}</h2>
+    <h2 class="gs-title">${success ? "골인! " + esc(GAME.captiveName || "공주") + " 구출 성공! 🎉" : "게임 끝! 🐾"}</h2>
     ${ending}
     ${success ? "" : heroImgTag("gs-hero")}
     <div class="gs-score">⭐ ${GAME.score}점</div>
